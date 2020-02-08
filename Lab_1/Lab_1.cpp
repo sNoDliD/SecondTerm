@@ -1,6 +1,17 @@
-﻿#include <iostream>
+﻿#include "Header.h"
+
+//#include <regex>
+//rename("dest.txt", "test2.txt");
+
 
 int main()
 {
-    std::cout << "Hefllo World!\n";
+	//writeToFileBin();
+
+	Product* pro = new Product;
+	cout << sizeof(*pro);
+	//cout << *pro;
+	delete pro;
+
+	return 0;
 }
