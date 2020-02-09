@@ -1,10 +1,14 @@
 #include "Header.h"
 #include <cstring>
 
-void writeToFileBin() {
-    char* path = new char[strlen(pathToDataBases) + strlen(binBase) + 1];
+char* path;
+void createPathBin() {
+    path = new char[strlen(pathToDataBases) + strlen(binBase) + 1];
     strcpy_s(path, strlen(pathToDataBases) + 1, pathToDataBases);
     strcat_s(path, strlen(pathToDataBases) + strlen(binBase) + 1, binBase);
+}
+
+void writeToFileBin() {
 
     //FILE* in = fopen("input.txt", "r");
     //FILE* out = fopen("output.txt", "w");

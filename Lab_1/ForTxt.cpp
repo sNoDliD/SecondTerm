@@ -4,20 +4,21 @@
 using std::ifstream;
 using std::ofstream;
 
-
-void writeToFileTxt() {
-    string path(pathToDataBases);
+string path;
+void createPathTxt() {
+    path = string(pathToDataBases);
     path.append(txtBase);
-    cout << sizeof(path) << endl << path << endl;
-    
+}
+void writeToFileTxt(Product* product) {
+    cout << path;
     //ifstream   in("test2.txt");
     ofstream   out(path);
-
-    Product* pro = new Product;
+    out << *product;
+    /*Product* pro = new Product;
     pro->id = 2;
     pro->units = Units::LITERS;
     out << *pro;
-    delete pro;
+    delete pro;*/
 
     //const int len = STRLEN;
     //char   line[len], * word;
@@ -63,3 +64,18 @@ void writeToFileTxt() {
     //in.close();
     out.close();
 }
+
+Product* readFromFileTxt() {
+    Product* product = new Product;
+    product->count = 1;
+    cout << *product;
+    return product;
+    //delete product;
+
+}
+//
+//if (remove(argv[1]) == -1)
+//printf("Remove Error");
+////
+//if (rename(argv[1], argv[2]) != 0)
+//printf("Rename Error");

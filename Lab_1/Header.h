@@ -1,6 +1,10 @@
-#pragma once
+#ifndef MAIN_HEADER_ALL_CPP
+#define MAIN_HEADER_ALL_CPP
 #include <iostream>
 #include <string>
+
+
+#pragma region UsingAndTypedef
 
 using std::cout;
 using std::endl;
@@ -10,17 +14,29 @@ using std::string;
 
 typedef unsigned char byte;
 typedef unsigned short int byte2;
- 
-const byte nameSize = 20;
+
+#pragma endregion
+
+
+#pragma region Constants
+
+const byte nameSize = 27;
 const char pathToDataBases[] = "DataBases/";
 const char txtBase[] = "Products.txt";
 const char binBase[] = "Products.bin";
 const char storeBase[] = "Store.(winer)";
 
-void writeToFileTxt();
-void writeToFileBin();
+#pragma endregion
+
+
+#pragma region Menu
 
 void doMenu();
+
+#pragma endregion
+
+
+#pragma region MyTypes
 
 enum class Units : byte {
 	PIECE,
@@ -29,7 +45,6 @@ enum class Units : byte {
 	BAG
 };
 
-
 struct Date {
 	byte2 year : 12;
 	byte mounth : 5;
@@ -37,9 +52,9 @@ struct Date {
 	byte hours : 5;
 	byte minutes : 6;
 	Date();
-	friend std::ostream& operator<< (std::ostream&, const Date&);    
+	//Date(char*);
+	friend std::ostream& operator<< (std::ostream&, const Date&);
 };
-
 
 #pragma pack(push, 1)
 class Product {
@@ -52,7 +67,6 @@ public:
 	int storeId;			//4
 	Units units;			//1		
 
-//public:
 	Product();
 
 	~Product();
@@ -70,3 +84,26 @@ class ProductString {
 class Store {
 
 };
+
+#pragma endregion
+
+
+#pragma region FileHeader
+
+void createPathTxt();
+void createPathBin();
+void writeToFileTxt(Product*);
+void writeToFileBin();
+Product* readFromFileTxt();
+
+#pragma endregion
+
+
+#pragma region AddFunctions
+
+void initialization();
+void memoryFree();
+
+#pragma endregion
+
+#endif //MAIN_HEADER_ALL_CPP

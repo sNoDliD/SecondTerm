@@ -1,14 +1,14 @@
 #include "Header.h"
 
+#pragma region Product
 
 Product::Product() {
-	cout << "Start constructor" << endl;
 	id = 0;
-	for (byte i = 0; i < 20; ++i) {
+	for (byte i = 0; i < nameSize; ++i) {
 
-		name[0 + i] = '0';
+		name[i] = '0';
 	}
-	name[19] = '\0';
+	name[nameSize - 1] = '\0';
 	count = 0;
 	date = Date();
 	units = Units(0);
@@ -32,6 +32,10 @@ std::ostream& operator<< (std::ostream& out, const Product& product){
 	return out;
 }
 
+#pragma endregion
+
+#pragma region Date
+
 Date::Date() {
 	year = 0;
 	mounth = 0;
@@ -43,7 +47,7 @@ Date::Date() {
 
 template< typename T>
 void addChar(std::ostream& out, byte count, T value, char returnValue = '0') {
-	char* result = new char[count+1];
+	char* result = new char[count + 1];
 	byte now = 0;
 	//Todo: start from end
 	for (int i = 0; i < count - 1; ++i) {
@@ -57,7 +61,7 @@ void addChar(std::ostream& out, byte count, T value, char returnValue = '0') {
 }
 
 std::ostream& operator<< (std::ostream& out, const Date& date) {
-	// dd.mm.yyyy hh:mm
+	/* dd.mm.yyyy hh:mm
 
 	char delimiterFirst = '.';
 	char delimiterSecond = ':';
@@ -71,7 +75,12 @@ std::ostream& operator<< (std::ostream& out, const Date& date) {
 	addChar(out, 2, date.hours);
 	out << delimiterSecond;
 	addChar(out, 2, date.minutes);
+	*/
+	out << (int)date.day << ' ' << (int)date.mounth << ' ' <<
+		date.year << ' ' << (int)date.hours << ' ' << (int)date.minutes;
 
 	return out;
 }
+
+#pragma endregion
 
