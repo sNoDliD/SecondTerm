@@ -3,7 +3,7 @@
 int main(){	
 	initialization();
 	
-	doMenu();
+	startMenu();
 
 	memoryFree();
 	return 0;

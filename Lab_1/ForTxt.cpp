@@ -5,10 +5,12 @@ using std::ifstream;
 using std::ofstream;
 
 string path;
+
 void createPathTxt() {
     path = string(pathToDataBases);
     path.append(txtBase);
 }
+
 void writeToFileTxt(Product* product) {
     cout << path;
     //ifstream   in("test2.txt");

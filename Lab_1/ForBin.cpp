@@ -2,6 +2,7 @@
 #include <cstring>
 
 char* path;
+
 void createPathBin() {
     path = new char[strlen(pathToDataBases) + strlen(binBase) + 1];
     strcpy_s(path, strlen(pathToDataBases) + 1, pathToDataBases);

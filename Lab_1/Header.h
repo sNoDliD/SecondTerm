@@ -31,7 +31,12 @@ const char storeBase[] = "Store.(winer)";
 
 #pragma region Menu
 
-void doMenu();
+void startMenu();
+void Interactive();
+void Demonstration();
+void Benchmark();
+void ShopChoice();
+void Add();
 
 #pragma endregion
 
