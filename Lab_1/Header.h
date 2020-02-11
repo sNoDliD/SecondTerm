@@ -8,7 +8,9 @@
 
 using std::cout;
 using std::endl;
+using std::cin;
 using std::string;
+
 ////#define cout std::cout
 //#define endl std::endl
 
@@ -24,19 +26,20 @@ const byte nameSize = 27;
 const char pathToDataBases[] = "DataBases/";
 const char txtBase[] = "Products.txt";
 const char binBase[] = "Products.bin";
-const char storeBase[] = "Store.(winer)";
+const char storeBase[] = "Store.bin";
 
 #pragma endregion
 
 
 #pragma region Menu
-
-void startMenu();
-void Interactive();
-void Demonstration();
-void Benchmark();
-void ShopChoice();
-void Add();
+void SetColor(int color = 14);
+int startMenu();
+int Interactive();
+int Demonstration();
+int Benchmark();
+int ShopChoice();
+int ShopCreate();
+int Add();
 
 #pragma endregion
 
@@ -65,7 +68,7 @@ struct Date {
 class Product {
 public:
 	int id;					//4
-	char name[27];			//27
+	char name[nameSize];			//27
 	float count;			//4
 	Date date;				//6
 	byte2 expirationDate;	//2
@@ -75,20 +78,40 @@ public:
 	Product();
 
 	~Product();
-
-	friend std::ostream& operator<< (std::ostream&, const Product&);
 };
 #pragma pack (pop)
 
 class ProductString {
+public:
+	int id;					//4
+	string name;			
+	float count;			//4
+	Date date;				//6
+	byte2 expirationDate;	//2
+	int storeId;			//4
+	Units units;			//1		
 
+	ProductString();
+
+	~ProductString();
+
+	friend std::ostream& operator<< (std::ostream&, const ProductString&);
 
 };
 
-
+#pragma pack (push, 1)
 class Store {
+public:
+	int id;					//4
+	char name[nameSize] = { '\0' };	//27
+	char adress[nameSize] = { '\0' };	//27
+	float rating;			//4
+	int maxProductCount;	//4
 
+	Store();
+	~Store();
 };
+#pragma pack(pop)
 
 #pragma endregion
 
@@ -97,9 +120,13 @@ class Store {
 
 void createPathTxt();
 void createPathBin();
-void writeToFileTxt(Product*);
-void writeToFileBin();
-Product* readFromFileTxt();
+void deletePathBin();
+
+void writeToFileTxt(ProductString*);
+ProductString* readFromFileTxt();
+
+void writeToFileBin(Store*);
+Store* readFromFileBin(int count = 0);
 
 #pragma endregion
 
@@ -108,6 +135,15 @@ Product* readFromFileTxt();
 
 void initialization();
 void memoryFree();
+void setLastIdStore();
+int getLastIdStore();
+void InputStr(char*);
+
+template <typename T>
+void InputStr(T& str);
+template void InputStr(int&);
+template void InputStr(float&);
+
 
 #pragma endregion
 

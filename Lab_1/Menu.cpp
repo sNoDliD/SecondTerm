@@ -3,26 +3,36 @@
 #include <conio.h>
 #include <vector>
 
+
 using std::vector;
 
-void SetColor(int color = 14)
+int shopId = 0;
+
+void SetColor(int color)
 {
 	HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hStdOut, (WORD)(color));
 }
 
+//void SetColor(int color, char str[]) {
+//	SetColor(color);
+//	cout << str;
+//	SetColor();
+//}
 class MenuItem
 {
 	friend class Menu;
 private:
 	int index = 0;
 	string nameMenuItem;
-	void (*ItemsFunc)() = 0;
+	int (*ItemsFunc)() = 0;
 	void (*ItemsFuncIntReturn)(int) = 0;
+	int returnValue = -1;
 
 public:
-	MenuItem(string title = "#", void (*funcofitem)()=0)
+	MenuItem(string title = "#", int (*funcofitem)()=0, int value = -1)
 	{
+		returnValue = value;
 		nameMenuItem = title;
 		ItemsFunc = funcofitem;
 	}
@@ -99,19 +109,32 @@ public:
 
 		return key;
 	}
-	void Do_Menu() {
+	int Do_Menu() {
 
 		while (true)
 		{
 			int ans = Show_Menu();
 			bool isEmpty = itemsCount < 1;
-			if (ans == 0 || isEmpty )
-				return;
+			if (ans == 0 || isEmpty)
+				return -1;
 
-			bool withoutFunc = menuItems[ans - 1].ItemsFunc == 0;
-			if (withoutFunc)
-				return;
-			menuItems[ans - 1].ItemsFunc();
+			bool withoutFunc = (menuItems[ans - 1].ItemsFunc == 0 &&
+				menuItems[ans - 1].ItemsFuncIntReturn == 0);
+			if (withoutFunc) {
+				return menuItems[ans - 1].returnValue;
+			}
+			//if functhion return 0 refresh menu, else return value
+			if (menuItems[ans - 1].ItemsFunc != 0) {
+				int result = menuItems[ans - 1].ItemsFunc();
+				if (result != 0)
+					return result;
+			}
+			else {
+				cout << "0 func, do another";
+				system("pause");
+
+			}
+
 
 		}
 	}
@@ -176,40 +199,51 @@ void f1() {
 	}
 }
 
-void Add() {
-
+int Add() {
+	return 0;
 }
 
-void ShopChoice() {
-
-}
-
-void Interactive() {
+int Interactive() {
 	vector <MenuItem>* all = new vector<MenuItem>;
-	(*all).push_back(MenuItem("Add", ShopChoice));
-	(*all).push_back(MenuItem("Show all", ShopChoice));
-	(*all).push_back(MenuItem("Search", ShopChoice));
-	(*all).push_back(MenuItem("Modify", ShopChoice));
-	(*all).push_back(MenuItem("Delete", ShopChoice));
+	(*all).push_back(MenuItem("Choose shop", ShopChoice));
+	(*all).push_back(MenuItem("Create new", ShopCreate));
 
-	Menu* menu = new Menu("Interactive mode", all);
+	Menu* menu = new Menu("Choose or create shop:", all);
+	shopId = (*menu).Do_Menu();
+	delete menu;
+
+	if (shopId < 1)
+		return 0;
+	cout << shopId;
+	system("pause");
+	all = new vector<MenuItem>;
+	(*all).push_back(MenuItem("Add", Add));
+	(*all).push_back(MenuItem("Show all"));
+	(*all).push_back(MenuItem("Search"));
+	(*all).push_back(MenuItem("Modify"));
+	(*all).push_back(MenuItem("Delete"));
+
+	menu = new Menu("Interactive mode", all);
 	(*menu).Do_Menu();
 	delete menu;
+	return 0;
 }
 
-void Demonstration() {
+int Demonstration() {
 	Menu* menu = new Menu("Demonstration...");
 	(*menu).Do_Menu();
 	delete menu;
+	return 0;
 }
 
-void Benchmark() {
+int Benchmark() {
 	Menu* menu = new Menu("Benchmark...");
 	(*menu).Do_Menu();
 	delete menu;
+	return 0;
 }
 
-void startMenu() {
+int startMenu() {
 	vector <MenuItem>* all = new vector<MenuItem>;
 	(*all).push_back(MenuItem("Interactive", Interactive));
 	(*all).push_back(MenuItem("Demonstration", Demonstration));
@@ -218,7 +252,69 @@ void startMenu() {
 	Menu* menu = new Menu("Choose your mode:", all);
 	(*menu).Do_Menu();
 	delete menu;
+	return 0;
 }
 
+int ShopChoice() {
+	vector <MenuItem>* all = new vector<MenuItem>;
+	Store* a;
+	int i = 0;
+	while (true) {
+		a = readFromFileBin(i);
+		if (a == nullptr) break;
+		(*all).push_back(MenuItem(a->name, 0, a->id));
+		++i;
+	}
+	delete a;
 
+
+	if (i == 0) {
+		cout << "Don't find any shops. Create new...\n\n";
+		ShopCreate();
+		return 0;
+	}
+	else {
+		Menu* menu = new Menu("Choose your mode:", all);
+		int result = (*menu).Do_Menu();
+		delete menu;
+		return result;
+	}
+}
+
+int ShopCreate() {
+	Store* newStore = new Store();
+
+	cout << "Enter shop's name: ";
+	InputStr(newStore->name);
+	cout << "(perfect)" << endl << endl;
+
+	cout << "Enter shop's adress: ";
+	InputStr(newStore->adress);
+	cout << "(perfect)" << endl << endl;
+
+	cout << "Enter shop's rating: ";
+	InputStr(newStore->rating);
+	while (newStore->rating < 0 || newStore->rating > 10) {
+		SetColor(6);
+		cout << "\tRating should be in interval [0,10]. Try again" << endl;
+		SetColor();
+		InputStr(newStore->rating);
+	}
+	cout << "(perfect)" << endl << endl;
+
+	cout << "Enter shop's maximum of product count: ";
+	InputStr(newStore->maxProductCount);
+	while (newStore->maxProductCount < 1) {
+		SetColor(6);
+		cout << "\tReal?) Product count should be more than 0. Try again" << endl;
+		SetColor();
+		InputStr(newStore->maxProductCount);
+	}
+
+	newStore->id = getLastIdStore();
+
+	writeToFileBin(newStore);
+	delete newStore;
+	return 0;
+}
 //for (auto strList : { "hello", "world" })

@@ -11,7 +11,7 @@ void createPathTxt() {
     path.append(txtBase);
 }
 
-void writeToFileTxt(Product* product) {
+void writeToFileTxt(ProductString* product) {
     cout << path;
     //ifstream   in("test2.txt");
     ofstream   out(path);
@@ -67,8 +67,8 @@ void writeToFileTxt(Product* product) {
     out.close();
 }
 
-Product* readFromFileTxt() {
-    Product* product = new Product;
+ProductString* readFromFileTxt() {
+    ProductString* product = new ProductString;
     product->count = 1;
     cout << *product;
     return product;
