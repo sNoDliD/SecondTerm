@@ -1,8 +1,8 @@
 #ifndef MAIN_HEADER_ALL_CPP
 #define MAIN_HEADER_ALL_CPP
+
 #include <iostream>
 #include <string>
-
 
 #pragma region UsingAndTypedef
 
@@ -10,9 +10,6 @@ using std::cout;
 using std::endl;
 using std::cin;
 using std::string;
-
-////#define cout std::cout
-//#define endl std::endl
 
 typedef unsigned char byte;
 typedef unsigned short int byte2;
@@ -31,20 +28,14 @@ const char storeBase[] = "Store.bin";
 #pragma endregion
 
 
-#pragma region Menu
-void SetColor(int color = 14);
-int startMenu();
-int Interactive();
-int Demonstration();
-int Benchmark();
-int ShopChoice();
-int ShopCreate();
-int Add();
-
-#pragma endregion
-
-
 #pragma region MyTypes
+
+enum class Mode : byte {
+	WAIT,
+	VECTOR,
+	TXT,
+	BIN
+};
 
 enum class Units : byte {
 	PIECE,
@@ -53,6 +44,8 @@ enum class Units : byte {
 	BAG
 };
 
+const char* uninsString(int unitId);
+
 struct Date {
 	byte2 year : 12;
 	byte mounth : 5;
@@ -60,8 +53,9 @@ struct Date {
 	byte hours : 5;
 	byte minutes : 6;
 	Date();
-	//Date(char*);
+	bool setDate(int, int, int, int, int);
 	friend std::ostream& operator<< (std::ostream&, const Date&);
+	string ToString();
 };
 
 #pragma pack(push, 1)
@@ -77,14 +71,14 @@ public:
 
 	Product();
 
-	~Product();
+	string ToString();
 };
 #pragma pack (pop)
 
 class ProductString {
 public:
 	int id;					//4
-	string name;			
+	string name;
 	float count;			//4
 	Date date;				//6
 	byte2 expirationDate;	//2
@@ -109,9 +103,24 @@ public:
 	int maxProductCount;	//4
 
 	Store();
-	~Store();
 };
 #pragma pack(pop)
+
+#pragma endregion
+
+
+#pragma region Menu
+
+void SetColor(int color = 14);
+void SetColor(int, const char*);
+int startMenu();
+int Interactive();
+int Demonstration();
+int Benchmark();
+int ShopChoice();
+int ShopCreate();
+int Add();
+int ShowAll();
 
 #pragma endregion
 
@@ -128,21 +137,29 @@ ProductString* readFromFileTxt();
 void writeToFileBin(Store*);
 Store* readFromFileBin(int count = 0);
 
+void writeToFileBin(Product* product);
+Product* readFromFileBinProduct(int count);
+
 #pragma endregion
 
 
 #pragma region AddFunctions
-
 void initialization();
 void memoryFree();
+
 void setLastIdStore();
 int getLastIdStore();
-void InputStr(char*);
 
+void setLastIdProduct();
+int getLastIdProduct();
+
+void InputStr(char*);
+void InputStr(Date&);
 template <typename T>
 void InputStr(T& str);
-template void InputStr(int&);
+template void InputStr<int>(int&);
 template void InputStr(float&);
+template void InputStr(byte2&);
 
 
 #pragma endregion

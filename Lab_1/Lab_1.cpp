@@ -1,6 +1,6 @@
 ﻿#include "Header.h"
 
-int main(){	
+int main(){
 	initialization();
 
 	try {
@@ -20,7 +20,7 @@ int main(){
 		}
 		cout << endl;
 	}
-
+	
 	memoryFree();
 	return 0;
 }

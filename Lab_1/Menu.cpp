@@ -7,6 +7,7 @@
 using std::vector;
 
 int shopId = 0;
+Mode workMode = Mode::WAIT;
 
 void SetColor(int color)
 {
@@ -14,11 +15,13 @@ void SetColor(int color)
 	SetConsoleTextAttribute(hStdOut, (WORD)(color));
 }
 
-//void SetColor(int color, char str[]) {
-//	SetColor(color);
-//	cout << str;
-//	SetColor();
-//}
+void SetColor(int color, const char* str){
+	SetColor(color);
+	cout << str << endl;
+	SetColor();
+}
+
+
 class MenuItem
 {
 	friend class Menu;
@@ -66,9 +69,7 @@ private:
 			}
 		}
 
-		SetColor(6);
-		cout << "\nPress ESC to go back or exit" << endl;
-		SetColor();
+		SetColor(6, "\nPress ESC to go back or exit");
 	}
 
 public:
@@ -200,6 +201,67 @@ void f1() {
 }
 
 int Add() {
+	Product* newProduct = new Product();
+	
+	cout << "Enter product's name: ";
+	InputStr(newProduct->name);
+	cout << "(perfect)\n\n";
+
+	cout << "Enter product's date in format day.mount.year hours:minutes (15.02.2002 21:10)" << endl;
+	InputStr(newProduct->date);
+	cout << "(perfect)\n\n";
+
+	cout << "Enter product's expiration days:" << endl;
+	InputStr(newProduct->expirationDate);
+	cout << "(perfect)\n\n";
+
+	vector <MenuItem>* all = new vector<MenuItem>;
+	(*all).push_back(MenuItem("Bag", nullptr, (int)Units::BAG));
+	(*all).push_back(MenuItem("Kilogramms", nullptr, (int)Units::KILOGRAMMS));
+	(*all).push_back(MenuItem("Liters", nullptr, (int)Units::LITERS));
+	(*all).push_back(MenuItem("Piece", nullptr, (int)Units::PIECE));
+
+	Menu* menu = new Menu("Choose units of product", all);
+	int unitId = (*menu).Do_Menu();
+	delete menu;
+	if (unitId < 0)
+		return -1;
+	newProduct->units = Units(unitId);
+
+	cout << "Enter product's count in "  << uninsString(unitId) << ":\n";
+	
+
+	InputStr(newProduct->count);
+	if (Units(unitId) == Units::BAG || Units(unitId) == Units::PIECE)
+		newProduct->count = (int)newProduct->count;
+	cout << "(perfect)" << endl << endl;
+
+	newProduct->storeId = shopId;
+	newProduct->id = getLastIdProduct();
+
+	writeToFileBin(newProduct);
+	delete newProduct;
+	return 0;
+}
+
+int ShowAll() {
+	Product* a;
+	int i = 0;
+	bool isProductFind = false;
+	while (true) {
+		a = readFromFileBinProduct(i);
+		if (a == nullptr) break;
+		if (a->storeId == shopId) {
+			isProductFind = true;
+			cout << (*a).ToString() << endl;
+		}
+		++i;
+	}
+	delete a;
+
+	if (!isProductFind) 
+		cout << "Store is empty\n\n";
+	system("pause");
 	return 0;
 }
 
@@ -212,13 +274,9 @@ int Interactive() {
 	shopId = (*menu).Do_Menu();
 	delete menu;
 
-	if (shopId < 1)
-		return 0;
-	cout << shopId;
-	system("pause");
 	all = new vector<MenuItem>;
 	(*all).push_back(MenuItem("Add", Add));
-	(*all).push_back(MenuItem("Show all"));
+	(*all).push_back(MenuItem("Show all", ShowAll));
 	(*all).push_back(MenuItem("Search"));
 	(*all).push_back(MenuItem("Modify"));
 	(*all).push_back(MenuItem("Delete"));
@@ -295,9 +353,7 @@ int ShopCreate() {
 	cout << "Enter shop's rating: ";
 	InputStr(newStore->rating);
 	while (newStore->rating < 0 || newStore->rating > 10) {
-		SetColor(6);
-		cout << "\tRating should be in interval [0,10]. Try again" << endl;
-		SetColor();
+		SetColor(6, "\tRating should be in interval [0,10]. Try again");
 		InputStr(newStore->rating);
 	}
 	cout << "(perfect)" << endl << endl;
@@ -305,9 +361,7 @@ int ShopCreate() {
 	cout << "Enter shop's maximum of product count: ";
 	InputStr(newStore->maxProductCount);
 	while (newStore->maxProductCount < 1) {
-		SetColor(6);
-		cout << "\tReal?) Product count should be more than 0. Try again" << endl;
-		SetColor();
+		SetColor(6, "\tReal?) Product count should be more than 0. Try again");
 		InputStr(newStore->maxProductCount);
 	}
 

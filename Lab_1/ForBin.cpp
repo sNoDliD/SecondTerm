@@ -21,6 +21,28 @@ void deletePathBin() {
     delete pathStore;
 }
 
+void setLastIdProduct() {
+    Product* product = new Product();
+    FILE* file;
+    fopen_s(&file, path , "rb");
+    if (file == 0) {
+        fopen_s(&file, path, "wb");
+        lastIdProduct = 0;
+    }
+    else {
+        fseek(file, 0 - sizeof(Product), SEEK_END);
+        fread(product, sizeof(Product), 1, file);
+        lastIdProduct = product->id; //set default = 0
+    }
+    if (file != 0)
+        fclose(file);
+    delete product;
+}
+
+int getLastIdProduct() {
+    return ++lastIdProduct;
+}
+
 void setLastIdStore() {
     Store* s = new Store();
     FILE* file;
@@ -41,6 +63,39 @@ void setLastIdStore() {
 
 int getLastIdStore() {
     return ++lastIdStore;
+}
+
+void writeToFileBin(Product* product) {
+    FILE* file;
+    fopen_s(&file, path, "ab");
+    if (file != 0) {
+        fwrite(product, sizeof(Product), 1, file);
+        fclose(file);
+    }
+    else
+        throw -1;
+}
+
+Product* readFromFileBinProduct(int count) {
+    if (lastIdProduct == 0) return nullptr;
+
+    Product* s = new Product();
+    FILE* file;
+    fopen_s(&file, path, "rb"); 
+
+
+    if (file != 0) {
+        fseek(file, count * sizeof(Product), SEEK_SET);
+        fread(s, sizeof(Product), 1, file);
+        if (feof(file)) {
+            delete s;
+            s = nullptr;
+        }
+        fclose(file);
+    }
+    else
+        throw - 1;
+    return s;
 }
 
 void writeToFileBin(Store* store) {
