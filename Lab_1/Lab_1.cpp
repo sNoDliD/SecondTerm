@@ -1,12 +1,11 @@
 ﻿#include "Header.h"
 
 int main(){
-	initialization();
+	Initialization();
 
 	try {
-		startMenu();
-	}
-	catch (int e) {
+		StartMenu();
+	} catch (int e) {
 		system("cls");
 		cout << "Program breaks: ";
 		switch (e)
@@ -15,12 +14,12 @@ int main(){
 			cout << "File truoble";
 			break;
 		default:
-			cout << "Just break";
+			cout << "Just break with code " << e;
 			break;
 		}
 		cout << endl;
 	}
 	
-	memoryFree();
+	MemoryFree();
 	return 0;
 }

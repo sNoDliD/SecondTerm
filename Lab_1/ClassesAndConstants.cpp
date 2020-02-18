@@ -1,4 +1,5 @@
 #include "Header.h"
+
 using std::to_string;
 
 #pragma region Product
@@ -19,7 +20,7 @@ Product::Product() {
 string Product::ToString() {
 	string result = "\tProduct #" + to_string(id) + "\n";
 	result +="Name: " + string(name) + "\n";
-	result +="Amound: " + to_string(count) + " " + uninsString((int)units) +"\n";
+	result +="Amount: " + FloatToString(count) + " " + UnitsToString((int)units) +"\n";
 	result +="Create: " + date.ToString() + "\n";
 	result +="Life time: " + to_string(expirationDate) + " days\n";
 	
@@ -41,8 +42,38 @@ ProductString::ProductString() {
 	storeId = 0;
 }
 
-ProductString::~ProductString(){
-	cout << "Memory has been cleaned" << endl;
+string ProductString::ToString() {
+	string result = "\tProduct #" + to_string(id) + "\n";
+	result += "Name: " + name + "\n";
+	result += "Amount: " + FloatToString(count) + " " + UnitsToString((int)units) + "\n";
+	result += "Create: " + date.ToString() + "\n";
+	result += "Life time: " + to_string(expirationDate) + " days\n";
+
+	return result;
+}
+
+std::istream& operator>> (std::istream& in, ProductString& product)
+{
+	in >> product.id;						//<< "id: " 
+
+	string result = "";
+	char c = in.get();
+	while (c = in.get()) {
+		if (c == '\n' || in.eof())
+			break;
+		result += c;
+	}
+	product.name = result;				//<< "name: " 
+
+	in >> product.date;					//<< "date: "
+	in >> product.count;					//<< "coutnt: " 
+	in >> product.expirationDate;			//<< "expirationDate: " 
+	int units = 0;
+	in >> units;
+	product.units = Units(units);				//<< "units: "
+	in >> product.storeId;					//<< "storeId: " 
+
+	return in;
 }
 
 std::ostream& operator<< (std::ostream& out, const ProductString& product){
@@ -70,7 +101,7 @@ Date::Date() {
 	minutes = 0;
 }
 
-bool Date::setDate(int day, int mounth, int year, int hours, int min)
+bool Date::SetDate(int day, int mounth, int year, int hours, int min)
 {
 	if (mounth > 12 || mounth < 1) return false;
 	if (year < 0) return false;
@@ -89,45 +120,44 @@ bool Date::setDate(int day, int mounth, int year, int hours, int min)
 }
 
 template< typename T>
-string addChar(byte count, T value, char returnValue = '0') {
+string AddChar(T value, size_t minCount = 2, char returnValue = '0') {
 	string result = "";
-	for (int i = 0; i < count - 1; ++i) {
-		if ((int)value < pow(10, (i + 1))) {
+	for (size_t i = 0; i < minCount - 1; ++i)
+		if ((int)value < pow(10, (i + 1))) 
 			result += returnValue;
-		}
-	}
+
 	result += std::to_string((int)value);
 	return result;
 }
 
 string Date::ToString(){
-	return addChar(2, day) + "." + addChar(2,mounth) + "." + addChar(4, year) + " " 
-		+ addChar(2, hours) + ":" + addChar(2,minutes);
+	return AddChar(day) + "." + AddChar(mounth) + "." + AddChar(year, 4) + " " 
+		+ AddChar(hours) + ":" + AddChar(minutes);
 }
 
-
-
 std::ostream& operator<< (std::ostream& out, const Date& date) {
-	/* dd.mm.yyyy hh:mm
-
-	char delimiterFirst = '.';
-	char delimiterSecond = ':';
-
-	addChar(out, 2, date.day);
-	out << delimiterFirst;
-	addChar(out, 2, date.mounth);
-	out << delimiterFirst;
-	addChar(out, 4, date.year);
-	out << ' ';
-	addChar(out, 2, date.hours);
-	out << delimiterSecond;
-	addChar(out, 2, date.minutes);
-	*/
 	out << (int)date.day << ' ' << (int)date.mounth << ' ' <<
 		date.year << ' ' << (int)date.hours << ' ' << (int)date.minutes;
 
 	return out;
 }
+
+std::istream& operator>> (std::istream& in, Date& date){
+	int data = 0;
+	in >> data;
+	date.day = data;
+	in >> data;
+	date.mounth = data;
+	in >> data;
+	date.year = data; 
+	in >> data;
+	date.hours = data; 
+	in >> data;
+	date.minutes = data;
+
+	return in;
+}
+
 
 #pragma endregion
 

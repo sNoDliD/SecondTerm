@@ -44,7 +44,7 @@ enum class Units : byte {
 	BAG
 };
 
-const char* uninsString(int unitId);
+const char* UnitsToString(int unitId);
 
 struct Date {
 	byte2 year : 12;
@@ -53,8 +53,9 @@ struct Date {
 	byte hours : 5;
 	byte minutes : 6;
 	Date();
-	bool setDate(int, int, int, int, int);
+	bool SetDate(int day, int mounth, int year, int hours, int min);
 	friend std::ostream& operator<< (std::ostream&, const Date&);
+	friend std::istream& operator>> (std::istream& in, Date& data);
 	string ToString();
 };
 
@@ -87,9 +88,10 @@ public:
 
 	ProductString();
 
-	~ProductString();
+	string ToString();
 
 	friend std::ostream& operator<< (std::ostream&, const ProductString&);
+	friend std::istream& operator>> (std::istream& in, ProductString& product);
 
 };
 
@@ -113,7 +115,7 @@ public:
 
 void SetColor(int color = 14);
 void SetColor(int, const char*);
-int startMenu();
+int StartMenu();
 int Interactive();
 int Demonstration();
 int Benchmark();
@@ -127,31 +129,39 @@ int ShowAll();
 
 #pragma region FileHeader
 
-void createPathTxt();
-void createPathBin();
-void deletePathBin();
+void CreatePathTxt();
+void CreatePathBin();
+void DeletePathBin();
 
-void writeToFileTxt(ProductString*);
-ProductString* readFromFileTxt();
+void SetLastIdStore();
+int GetLastIdStore();
 
-void writeToFileBin(Store*);
-Store* readFromFileBin(int count = 0);
+void SetLastIdBin();
+int GetLastIdBin();
 
-void writeToFileBin(Product* product);
-Product* readFromFileBinProduct(int count);
+int GetLastIdVector();
+
+void SetLastIdTxt();
+int GetLastIdTxt();
+
+void AppendProductVector(Product* product);
+Product* TakeProductVector(size_t indexInVector);
+
+void AppendProductTxt(ProductString* product);
+ProductString* TakeProductTxt(int indexInFile);
+
+void AppendStore(Store*);
+Store* TakeStore(int indexInFile);
+
+void AppendProductBin(Product* product);
+Product* TakeProductBin(int indexInFile);
 
 #pragma endregion
 
 
 #pragma region AddFunctions
-void initialization();
-void memoryFree();
-
-void setLastIdStore();
-int getLastIdStore();
-
-void setLastIdProduct();
-int getLastIdProduct();
+void Initialization();
+void MemoryFree();
 
 void InputStr(char*);
 void InputStr(Date&);
@@ -161,6 +171,7 @@ template void InputStr<int>(int&);
 template void InputStr(float&);
 template void InputStr(byte2&);
 
+string FloatToString(float str, const size_t accuracy = 3);
 
 #pragma endregion
 

@@ -28,12 +28,12 @@ class MenuItem
 private:
 	int index = 0;
 	string nameMenuItem;
-	int (*ItemsFunc)() = 0;
-	void (*ItemsFuncIntReturn)(int) = 0;
+	int (*ItemsFunc)() = nullptr;
+	void (*ItemsFuncIntReturn)(int) = nullptr;
 	int returnValue = -1;
 
 public:
-	MenuItem(string title = "#", int (*funcofitem)()=0, int value = -1)
+	MenuItem(string title = "#", int (*funcofitem)()= nullptr, int value = -1)
 	{
 		returnValue = value;
 		nameMenuItem = title;
@@ -200,9 +200,52 @@ void f1() {
 	}
 }
 
-int Add() {
+void AddTxt() {
+	ProductString* newProduct = new ProductString();
+
+	cout << "Enter product's name: ";
+	getline(cin, newProduct->name);
+	cout << "(perfect)\n\n";
+
+	cout << "Enter product's date in format day.mount.year hours:minutes (15.02.2002 21:10)" << endl;
+	InputStr(newProduct->date);
+	cout << "(perfect)\n\n";
+
+	cout << "Enter product's expiration days:" << endl;
+	InputStr(newProduct->expirationDate);
+	cout << "(perfect)\n\n";
+
+	vector <MenuItem>* all = new vector<MenuItem>;
+	(*all).push_back(MenuItem("Bag", nullptr, (int)Units::BAG));
+	(*all).push_back(MenuItem("Kilogramms", nullptr, (int)Units::KILOGRAMMS));
+	(*all).push_back(MenuItem("Liters", nullptr, (int)Units::LITERS));
+	(*all).push_back(MenuItem("Piece", nullptr, (int)Units::PIECE));
+
+	Menu* menu = new Menu("Choose units of product", all);
+	int unitId = (*menu).Do_Menu();
+	delete menu;
+
+	newProduct->units = Units(unitId);
+
+	cout << "Enter product's count in " << UnitsToString(unitId) << ":\n";
+
+
+	InputStr(newProduct->count);
+	if (Units(unitId) == Units::BAG || Units(unitId) == Units::PIECE)
+		newProduct->count = (int)newProduct->count;
+	system("cls");
+
+	newProduct->storeId = shopId;
+	newProduct->id = GetLastIdTxt();
+
+	AppendProductTxt(newProduct);
+	cout << newProduct->ToString() << "\n\nSuccess" << endl;
+	delete newProduct;
+}
+
+void AddVector() {
 	Product* newProduct = new Product();
-	
+
 	cout << "Enter product's name: ";
 	InputStr(newProduct->name);
 	cout << "(perfect)\n\n";
@@ -224,32 +267,90 @@ int Add() {
 	Menu* menu = new Menu("Choose units of product", all);
 	int unitId = (*menu).Do_Menu();
 	delete menu;
-	if (unitId < 0)
-		return -1;
+
 	newProduct->units = Units(unitId);
 
-	cout << "Enter product's count in "  << uninsString(unitId) << ":\n";
-	
+	cout << "Enter product's count in " << UnitsToString(unitId) << ":\n";
+
 
 	InputStr(newProduct->count);
 	if (Units(unitId) == Units::BAG || Units(unitId) == Units::PIECE)
 		newProduct->count = (int)newProduct->count;
-	cout << "(perfect)" << endl << endl;
+	system("cls");
 
 	newProduct->storeId = shopId;
-	newProduct->id = getLastIdProduct();
+	newProduct->id = GetLastIdVector() + 1;
 
-	writeToFileBin(newProduct);
+	AppendProductVector(newProduct);
+	cout << newProduct->ToString() << "\n\nSuccess" << endl;
 	delete newProduct;
+}
+
+void AddBin() {
+	Product* newProduct = new Product();
+
+	cout << "Enter product's name: ";
+	InputStr(newProduct->name);
+	cout << "(perfect)\n\n";
+
+	cout << "Enter product's date in format day.mount.year hours:minutes (15.02.2002 21:10)" << endl;
+	InputStr(newProduct->date);
+	cout << "(perfect)\n\n";
+
+	cout << "Enter product's expiration days:" << endl;
+	InputStr(newProduct->expirationDate);
+	cout << "(perfect)\n\n";
+
+	vector <MenuItem>* all = new vector<MenuItem>;
+	(*all).push_back(MenuItem("Bag", nullptr, (int)Units::BAG));
+	(*all).push_back(MenuItem("Kilogramms", nullptr, (int)Units::KILOGRAMMS));
+	(*all).push_back(MenuItem("Liters", nullptr, (int)Units::LITERS));
+	(*all).push_back(MenuItem("Piece", nullptr, (int)Units::PIECE));
+
+	Menu* menu = new Menu("Choose units of product", all);
+	int unitId = (*menu).Do_Menu();
+	delete menu;
+
+	newProduct->units = Units(unitId);
+
+	cout << "Enter product's count in " << UnitsToString(unitId) << ":\n";
+
+
+	InputStr(newProduct->count);
+	if (Units(unitId) == Units::BAG || Units(unitId) == Units::PIECE)
+		newProduct->count = (int)newProduct->count;
+	system("cls");
+
+	newProduct->storeId = shopId;
+	newProduct->id = GetLastIdBin();
+
+	AppendProductBin(newProduct);
+	cout << newProduct->ToString() << "\n\nSuccess" << endl;
+	delete newProduct;
+}
+
+int Add() {
+	switch (workMode)
+	{
+	case Mode::VECTOR:
+		AddVector();
+		break;
+	case Mode::TXT:
+		AddTxt();
+		break;
+	case Mode::BIN:
+		AddBin();
+	}
+	system("pause");
 	return 0;
 }
 
-int ShowAll() {
+bool ShowAllVector() {
 	Product* a;
 	int i = 0;
 	bool isProductFind = false;
 	while (true) {
-		a = readFromFileBinProduct(i);
+		a = TakeProductVector(i);
 		if (a == nullptr) break;
 		if (a->storeId == shopId) {
 			isProductFind = true;
@@ -258,10 +359,90 @@ int ShowAll() {
 		++i;
 	}
 	delete a;
+	return isProductFind;
 
+}
+
+bool ShowAllTxt() {
+	ProductString* a;
+	int i = 0;
+	bool isProductFind = false;
+	while (true) {
+		a = TakeProductTxt(i++);
+		if (a == nullptr) 
+			break;
+		if (a->storeId == shopId) {
+			isProductFind = true;
+			cout << (*a).ToString() << endl;
+		}
+		delete a;
+	}
+	return isProductFind;
+}
+
+bool ShowAllBin() {
+	Product* a;
+	int i = 0;
+	bool isProductFind = false;
+	while (true) {
+		a = TakeProductBin(i++);
+		if (a == nullptr) 
+			break;
+		if (a->storeId == shopId) {
+			isProductFind = true;
+			cout << a->ToString() << endl;
+		}
+		delete a;
+	}
+	return isProductFind;
+}
+
+int ShowAll() {
+	bool isProductFind = false;
+	switch (workMode)
+	{
+	case Mode::VECTOR:
+		isProductFind = ShowAllVector();
+		break;
+	case Mode::TXT:
+		isProductFind = ShowAllTxt();
+		break;
+	case Mode::BIN:
+		isProductFind = ShowAllBin();
+		break;
+	}
 	if (!isProductFind) 
 		cout << "Store is empty\n\n";
 	system("pause");
+	return 0;
+}
+
+int Search() {
+	vector <MenuItem>* all = new vector<MenuItem>;
+	(*all).push_back(MenuItem("By name", nullptr, 1));
+	(*all).push_back(MenuItem("By amount", nullptr, 2));
+	(*all).push_back(MenuItem("By date", nullptr, 3));
+
+	Menu* menu = new Menu("Search type:", all);
+	int type = (*menu).Do_Menu();
+	delete menu;
+
+	switch (type)
+	{
+	case 1:
+		cout << "name";
+		system("pause");
+		break;
+	case 2:
+		cout << "amount";
+		system("pause");
+		break;
+	case 3:
+		cout << "date";
+		system("pause");
+		break;
+	}
+
 	return 0;
 }
 
@@ -273,11 +454,24 @@ int Interactive() {
 	Menu* menu = new Menu("Choose or create shop:", all);
 	shopId = (*menu).Do_Menu();
 	delete menu;
+	if (shopId == -1)
+		return 0;
+	all = new vector<MenuItem>;
+	(*all).push_back(MenuItem("Vector", nullptr, 1));
+	(*all).push_back(MenuItem("Text", nullptr, 2));
+	(*all).push_back(MenuItem("Binary",nullptr, 3));
+
+	menu = new Menu("Choose your read/write mode", all);
+	int mode = (*menu).Do_Menu();
+	delete menu;
+	if (mode == -1)
+		return 0;
+	workMode = Mode(mode);
 
 	all = new vector<MenuItem>;
 	(*all).push_back(MenuItem("Add", Add));
 	(*all).push_back(MenuItem("Show all", ShowAll));
-	(*all).push_back(MenuItem("Search"));
+	(*all).push_back(MenuItem("Search", Search));
 	(*all).push_back(MenuItem("Modify"));
 	(*all).push_back(MenuItem("Delete"));
 
@@ -301,7 +495,7 @@ int Benchmark() {
 	return 0;
 }
 
-int startMenu() {
+int StartMenu() {
 	vector <MenuItem>* all = new vector<MenuItem>;
 	(*all).push_back(MenuItem("Interactive", Interactive));
 	(*all).push_back(MenuItem("Demonstration", Demonstration));
@@ -318,9 +512,9 @@ int ShopChoice() {
 	Store* a;
 	int i = 0;
 	while (true) {
-		a = readFromFileBin(i);
+		a = TakeStore(i);
 		if (a == nullptr) break;
-		(*all).push_back(MenuItem(a->name, 0, a->id));
+		(*all).push_back(MenuItem(a->name, nullptr, a->id));
 		++i;
 	}
 	delete a;
@@ -365,10 +559,9 @@ int ShopCreate() {
 		InputStr(newStore->maxProductCount);
 	}
 
-	newStore->id = getLastIdStore();
+	newStore->id = GetLastIdStore();
 
-	writeToFileBin(newStore);
+	AppendStore(newStore);
 	delete newStore;
 	return 0;
 }
-//for (auto strList : { "hello", "world" })

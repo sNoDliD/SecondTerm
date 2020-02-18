@@ -6,7 +6,7 @@ char* pathStore;
 int lastIdStore = 0;
 int lastIdProduct = 0;
 
-void createPathBin() {
+void CreatePathBin() {
     pathStore = new char[strlen(pathToDataBases) + strlen(storeBase) + 1];
     strcpy_s(pathStore, strlen(pathToDataBases) + 1, pathToDataBases);
     strcat_s(pathStore, strlen(pathToDataBases) + strlen(storeBase) + 1, storeBase);
@@ -16,12 +16,12 @@ void createPathBin() {
     strcat_s(path, strlen(pathToDataBases) + strlen(binBase) + 1, binBase);
 }
 
-void deletePathBin() {
-    delete path;
-    delete pathStore;
+void DeletePathBin() {
+    delete[] path;
+    delete[] pathStore;
 }
 
-void setLastIdProduct() {
+void SetLastIdBin() {
     Product* product = new Product();
     FILE* file;
     fopen_s(&file, path , "rb");
@@ -39,11 +39,11 @@ void setLastIdProduct() {
     delete product;
 }
 
-int getLastIdProduct() {
+int GetLastIdBin() {
     return ++lastIdProduct;
 }
 
-void setLastIdStore() {
+void SetLastIdStore() {
     Store* s = new Store();
     FILE* file;
     fopen_s(&file, pathStore, "rb");
@@ -61,11 +61,11 @@ void setLastIdStore() {
     delete s;
 }
 
-int getLastIdStore() {
+int GetLastIdStore() {
     return ++lastIdStore;
 }
 
-void writeToFileBin(Product* product) {
+void AppendProductBin(Product* product) {
     FILE* file;
     fopen_s(&file, path, "ab");
     if (file != 0) {
@@ -76,29 +76,28 @@ void writeToFileBin(Product* product) {
         throw -1;
 }
 
-Product* readFromFileBinProduct(int count) {
+Product* TakeProductBin(int indexInFile) {
     if (lastIdProduct == 0) return nullptr;
 
-    Product* s = new Product();
+    Product* product = new Product();
     FILE* file;
     fopen_s(&file, path, "rb"); 
 
-
     if (file != 0) {
-        fseek(file, count * sizeof(Product), SEEK_SET);
-        fread(s, sizeof(Product), 1, file);
+        fseek(file, indexInFile * sizeof(Product), SEEK_SET);
+        fread(product, sizeof(Product), 1, file);
         if (feof(file)) {
-            delete s;
-            s = nullptr;
+            delete product;
+            product = nullptr;
         }
         fclose(file);
     }
     else
         throw - 1;
-    return s;
+    return product;
 }
 
-void writeToFileBin(Store* store) {
+void AppendStore(Store* store) {
     FILE* file;
     fopen_s(&file, pathStore, "ab");
     if (file != 0) {
@@ -109,26 +108,25 @@ void writeToFileBin(Store* store) {
         throw -1;
 }
 
-Store* readFromFileBin(int count) {
+Store* TakeStore(int indexInFile) {
     if (lastIdStore == 0) return nullptr;
 
-    Store* s = new Store();
+    Store* store = new Store();
     FILE* file;
     fopen_s(&file, pathStore, "rb"); 
 
-
     if (file != 0) {
-        fseek(file, count * sizeof(Store), SEEK_SET);
-        fread(s, sizeof(Store), 1, file);
+        fseek(file, indexInFile * sizeof(Store), SEEK_SET);
+        fread(store, sizeof(Store), 1, file);
         if (feof(file)) {
-            delete s;
-            s = nullptr;
+            delete store;
+            store = nullptr;
         }
         fclose(file);
     }
     else
         throw - 1;
-    return s;
+    return store;
 }
 
 void modify(Store* a, int id) {

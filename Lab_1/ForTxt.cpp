@@ -5,76 +5,55 @@ using std::ifstream;
 using std::ofstream;
 
 string path;
+int lastId = 0;
 
-void createPathTxt() {
+void CreatePathTxt() {
     path = string(pathToDataBases);
     path.append(txtBase);
 }
 
-void writeToFileTxt(ProductString* product) {
-    cout << path;
-    //ifstream   in("test2.txt");
-    ofstream   out(path);
+
+void SetLastIdTxt() {
+    int i = 0;
+    ProductString* product;
+    ofstream out(path, std::iostream::app);
+    out.close();
+    while (true) {
+        ProductString* product = TakeProductTxt(i++);
+        if (product == nullptr)
+            break;
+        lastId = product->id;
+        delete product;
+    }
+}
+
+int GetLastIdTxt() {
+    return ++lastId;
+}
+
+void AppendProductTxt(ProductString* product) {
+    ofstream out(path, std::iostream::app);
     out << *product;
-    /*Product* pro = new Product;
-    pro->id = 2;
-    pro->units = Units::LITERS;
-    out << *pro;
-    delete pro;*/
 
-    //const int len = STRLEN;
-    //char   line[len], * word;
-
-    //cout << "Введите слово";
-    //cin >> word;
-
-    //while (!in.eof())
-    //{
-    //    in.getline(line, len);
-    //    if (strcmp(line, word) != 0)
-    //    {
-    //        out << line << endl;
-    //    }
-
-    //}
-    ////rename
-    //cout << "Слово успешно удалено";
-
-    //char* file_name = "text.txt";
-    //string buf, rem;
-
-    //cout << "String to remove: ";
-
-    //getline(std::cin, rem);
-
-    //ifstream ifs(file_name);
-    //if (!ifs.is_open()) {
-    //    std::cerr << "Can't open file for read!" << std::endl;
-    //    return 1;
-    //}
-    //while (getline(ifs, buf))
-    //    if (buf != rem)
-    //        vec.push_back(buf);
-    //ifs.close();
-
-    //std::ofstream ofs(file_name);
-    //if (!ofs.is_open()) {
-    //    std::cerr << "Can't open file for write!" << std::endl;
-    //    return 1;
-    //}
-    //std::copy(vec.begin(), vec.end(), std::ostream_iterator<std::string>(ofs, "\n"));
-    //in.close();
     out.close();
 }
 
-ProductString* readFromFileTxt() {
+ProductString* TakeProductTxt(int indexInFile) {
     ProductString* product = new ProductString;
-    product->count = 1;
-    cout << *product;
+    ifstream in;
+    in.open(path);
+    for (int i = 0; i <= indexInFile; i++)
+        in >> *product;
+    if (in.eof()) {
+        delete product;
+        product = nullptr;
+    }
+    in.close();
     return product;
-    //delete product;
-
 }
+
+
+
 //
 //if (remove(argv[1]) == -1)
 //printf("Remove Error");

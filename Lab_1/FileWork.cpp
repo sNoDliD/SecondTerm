@@ -1,21 +1,20 @@
 #include "Header.h"
 
-void initialization() {
-	createPathTxt();
-	createPathBin();
-	setLastIdStore(); //Todo: clear and setLastId
-	setLastIdProduct();
+void Initialization() {
+	CreatePathTxt();
+	CreatePathBin();
+	SetLastIdStore(); //Todo: clear and setLastId
+	SetLastIdBin();
+	SetLastIdTxt();
 }
 
-void memoryFree() {
-	deletePathBin();
+void MemoryFree() {
+	DeletePathBin();
 }
 
 
-const char* uninsString(int unitId) {
-
-	switch (Units(unitId))
-	{
+const char* UnitsToString(int unitId) {
+	switch (Units(unitId)){
 	case Units::PIECE:
 		return "pieces";
 	case Units::KILOGRAMMS:
@@ -40,6 +39,7 @@ void InputStr(char* str) {
 		cin.getline(str, nameSize);
 	}
 }
+
 void InputStr(Date& date) {
 	int day, mounth, year, hour, min;
 	while (true) {
@@ -49,7 +49,7 @@ void InputStr(Date& date) {
 			cin.ignore(INT64_MAX, '\n');
 		}
 		else {
-			if (date.setDate(day, mounth, year, hour, min))
+			if (date.SetDate(day, mounth, year, hour, min))
 				return;
 		}
 		SetColor(6, "\tIncorrect input. Try again");
@@ -69,7 +69,58 @@ void InputStr<T>(T& str) {
 	cin.ignore(INT64_MAX, '\n');
 }
 
- /*Ask list
+string FloatToString(float str, const size_t accuracy) {
+	string result = "";
+	int whole = int(str);
+	str -= whole;
+
+	while (whole > 0) {
+		char now = whole % 10 + '0';
+		result = now + result;
+		whole /= 10;
+	}
+
+	whole = int((1 + str) * pow(10, accuracy + 1));
+
+	string extra = "";
+	bool over = false;
+	bool first = true;
+
+	for (size_t i = 0; i < accuracy + 1; i++) {
+		char now = whole % 10 + '0';
+		bool add = true;
+
+		if (first && now == '0' && !over)
+			add = false;
+		else if (now > '4' && i == 0) {
+			over = true;
+			add = false;
+		}
+		else if (over) {
+			now++;
+			over = false;
+			if (now == '9' + 1) {
+				add = false;
+				over = true;
+			}
+		}
+		if (add) {
+			first = false;
+			extra = now + extra;
+		}
+		whole /= 10;
+	}
+
+	if (result == "")
+		result = "0";
+	while (extra.length() > accuracy)
+		extra.pop_back();
+	if (extra != "")
+		result += "." + extra;
+	return result;
+}
+
+/*Ask list
  1. Можно ли выбирать в функции параинтр для передачи значение 
  2. char[] as param in func
  3. templete...
@@ -77,7 +128,15 @@ void InputStr<T>(T& str) {
  */
 
 /*Notes
-fread return count of readed objects
+(-3%) no support for real numbers in different formats (either 0.5 or 0,5)
+
+(-9%) Implementing custom function or type that repeats features of standard library
+datetime -> use std::tm
+parse datetime -> use std::get_time or implement using sscanf
+datetime to string, output -> use strftime
+
+
+for (auto strList : { "hello", "world" })
 
 int f() {
 	return 0;
