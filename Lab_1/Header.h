@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <time.h>
 
 #pragma region UsingAndTypedef
 
@@ -21,8 +22,7 @@ typedef unsigned short int byte2;
 
 const byte nameSize = 27;
 const char pathToDataBases[] = "DataBases/";
-const char txtBase[] = "Products.txt";
-const char binBase[] = "Products.bin";
+//const char pathToStores[] = "Stores/";
 const char storeBase[] = "Store.bin";
 
 #pragma endregion
@@ -57,6 +57,10 @@ struct Date {
 	friend std::ostream& operator<< (std::ostream&, const Date&);
 	friend std::istream& operator>> (std::istream& in, Date& data);
 	string ToString();
+
+	int DaysBetween(Date another);
+	int DaysSinceChristmas();
+	void Randomaze();
 };
 
 #pragma pack(push, 1)
@@ -73,6 +77,8 @@ public:
 	Product();
 
 	string ToString();
+
+	void Randomaze(int id);
 };
 #pragma pack (pop)
 
@@ -90,6 +96,8 @@ public:
 
 	string ToString();
 
+	void Randomaze();
+
 	friend std::ostream& operator<< (std::ostream&, const ProductString&);
 	friend std::istream& operator>> (std::istream& in, ProductString& product);
 
@@ -105,6 +113,8 @@ public:
 	int maxProductCount;	//4
 
 	Store();
+
+	void Randomaze();
 };
 #pragma pack(pop)
 
@@ -112,25 +122,20 @@ public:
 
 
 #pragma region Menu
-
+int ShopId();
 void SetColor(int color = 14);
-void SetColor(int, const char*);
+void SetColor(int color , const char* str);
+
 int StartMenu();
-int Interactive();
-int Demonstration();
-int Benchmark();
-int ShopChoice();
-int ShopCreate();
-int Add();
-int ShowAll();
 
 #pragma endregion
 
 
 #pragma region FileHeader
 
-void CreatePathTxt();
-void CreatePathBin();
+void CreatePathTxt(const char* txtPath);
+void CreatePathBin(const char* binPath);
+void CreatePathStore();
 void DeletePathBin();
 
 void SetLastIdStore();
@@ -156,10 +161,15 @@ Store* TakeStore(int indexInFile);
 void AppendProductBin(Product* product);
 Product* TakeProductBin(int indexInFile);
 
+void AddVectorRandom(int n = 1);
+void AddTxtRandom(int n = 1);
+void AddBinRandom(int n = 1);
+
 #pragma endregion
 
 
 #pragma region AddFunctions
+
 void Initialization();
 void MemoryFree();
 
@@ -172,6 +182,15 @@ template void InputStr(float&);
 template void InputStr(byte2&);
 
 string FloatToString(float str, const size_t accuracy = 3);
+
+void Capitalize(string& str);
+void Capitalize(char* str);
+
+bool SubString(const string& main, const string& compare);
+bool SubString(const char* main, const char* compare);
+
+void StringRandom(string& str, size_t minSize = 5, size_t maxSize = nameSize);
+void StringRandom(char* str, size_t minSize = 5, size_t maxSize = nameSize);
 
 #pragma endregion
 

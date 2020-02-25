@@ -1,17 +1,88 @@
 #include "Header.h"
 
 void Initialization() {
-	CreatePathTxt();
-	CreatePathBin();
+	cout << "Wait for initialization..." << endl;
+	CreatePathStore();
+	srand((unsigned int) time(0));
 	SetLastIdStore(); //Todo: clear and setLastId
-	SetLastIdBin();
-	SetLastIdTxt();
 }
 
 void MemoryFree() {
 	DeletePathBin();
 }
 
+void Capitalize(string& str) {
+	size_t len = str.length();
+	if (len < 1) return;
+	str[0] = toupper(str[0]);
+	for (size_t i = 1; i < len; i++)
+		str[i] = tolower(str[i]);
+}
+
+void Capitalize(char* str) {
+	size_t len = strlen(str);
+	if (len < 1) return;
+	str[0] = toupper(str[0]);
+	for (size_t i = 1; i < len; i++)
+		str[i] = tolower(str[i]);
+}
+
+bool SubString(const char* main, const char* compare) {
+	size_t mainLen = strlen(main), compareLen = strlen(compare);
+	if (mainLen < compareLen)
+		return false;
+
+	for (size_t i = 0; i <= mainLen - compareLen; i++) {
+		bool result = true;
+		for (size_t j = 0; j < compareLen; j++)
+			if (tolower(main[i + j]) != tolower(compare[j])) {
+				result = false;
+				break;
+			}
+		if (result == false)
+			continue;
+		return true;
+	}
+	return false;
+}
+
+bool SubString(const string& main, const string& compare) {
+	size_t mainLen = main.length(), compareLen = compare.length();
+	if (mainLen < compareLen)
+		return false;
+
+	for (size_t i = 0; i <= mainLen - compareLen; i++) {
+		bool result = true;
+		for (size_t j = 0; j < compareLen; j++)
+			if (tolower(main[i + j]) != tolower(compare[j])) {
+				result = false;
+				break;
+			}
+		if (result == false)
+			continue;
+		return true;
+	}
+	return false;
+}
+
+void StringRandom(string& str, size_t minSize, size_t maxSize) {
+	str = "";
+	if (minSize > maxSize)
+		minSize = 0;
+	size_t len = rand() % (maxSize - minSize + 1) + minSize;
+	for (size_t i = 0; i < len; i++)
+		str += rand() % ('z' - 'a') + 'a';
+}
+
+void StringRandom(char* str, size_t minSize, size_t maxSize) {
+	if (minSize > maxSize)
+		minSize = 0;
+	size_t len = rand() % (maxSize - minSize + 1) + minSize;
+	for (size_t i = 0; i < len; i++)
+		str[i] = rand() % ('z' - 'a') + 'a';
+	str[len] = '\0';
+
+}
 
 const char* UnitsToString(int unitId) {
 	switch (Units(unitId)){
@@ -58,8 +129,7 @@ void InputStr(Date& date) {
 template <typename T>
 void InputStr<T>(T& str) {
 	cin >> str;
-	while (cin.fail())
-	{
+	while (cin.fail()){
 		cin.clear();
 		cin.ignore(INT64_MAX, '\n');
 		SetColor(6, "\tIncorrect input. Try again");
@@ -121,14 +191,24 @@ string FloatToString(float str, const size_t accuracy) {
 }
 
 /*Ask list
- 1. Можно ли выбирать в функции параинтр для передачи значение 
- 2. char[] as param in func
  3. templete...
  4. ...params
+
+6. what faster == or <
+
+
+	Todo: *all vector delete
+	todo: think zero product in txt
+
+1. Modify
+2. Delete
+3. Shop Find
+4. Demonstration
+5. Benchmark
+
  */
 
 /*Notes
-(-3%) no support for real numbers in different formats (either 0.5 or 0,5)
 
 (-9%) Implementing custom function or type that repeats features of standard library
 datetime -> use std::tm

@@ -1,19 +1,25 @@
 #include "Header.h"
 #include <cstring>
 
-char* path;
-char* pathStore;
+char* path = nullptr;
+char* pathStore = nullptr;
 int lastIdStore = 0;
 int lastIdProduct = 0;
 
-void CreatePathBin() {
-    pathStore = new char[strlen(pathToDataBases) + strlen(storeBase) + 1];
-    strcpy_s(pathStore, strlen(pathToDataBases) + 1, pathToDataBases);
-    strcat_s(pathStore, strlen(pathToDataBases) + strlen(storeBase) + 1, storeBase);
+void CreatePathBin(const char* binBase) {
+    size_t len = strlen(pathToDataBases) + strlen(binBase) + 5;
+    if (path) 
+        delete[] path;
+    path = new char[len];
+    strcpy_s(path, len, pathToDataBases);
+    strcat_s(path, len, binBase);
+    strcat_s(path, len, ".bin");
+}
 
-    path = new char[strlen(pathToDataBases) + strlen(binBase) + 1];
-    strcpy_s(path, strlen(pathToDataBases) + 1, pathToDataBases);
-    strcat_s(path, strlen(pathToDataBases) + strlen(binBase) + 1, binBase);
+void CreatePathStore() {
+    size_t len = strlen(storeBase) + 1;
+    pathStore = new char[len];
+    strcpy_s(pathStore, len, storeBase);
 }
 
 void DeletePathBin() {
@@ -26,7 +32,7 @@ void SetLastIdBin() {
     FILE* file;
     fopen_s(&file, path , "rb");
     if (file == 0) {
-        fopen_s(&file, path, "wb");
+        fopen_s(&file, path, "ab");
         lastIdProduct = 0;
     }
     else {
@@ -140,4 +146,15 @@ void modify(Store* a, int id) {
     }
     else
         throw - 1;
+}
+
+void AddBinRandom(int n) {
+    Product* newProduct = new Product();
+
+    for (int i = 0; i < n; i++) {
+        newProduct->Randomaze(GetLastIdBin());
+        AppendProductBin(newProduct);
+    }
+
+    delete newProduct;
 }

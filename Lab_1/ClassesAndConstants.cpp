@@ -27,6 +27,25 @@ string Product::ToString() {
 	return result;
 }
 
+void Product::Randomaze(int id){
+	StringRandom(name);
+	Capitalize(name);
+
+	date.Randomaze();
+
+	expirationDate = rand() % 1000 + 1;
+
+	units = Units(rand() % 4);
+
+	count = (float) (rand() % 1000 + 1);
+	if (units == Units::KILOGRAMMS || units == Units::LITERS)
+		count += (float)(rand() % 1000) / 1000;
+
+	storeId = ShopId();
+
+	this->id = id;
+}
+
 #pragma endregion
 
 
@@ -52,10 +71,36 @@ string ProductString::ToString() {
 	return result;
 }
 
+void ProductString::Randomaze(){
+	StringRandom(name);
+	Capitalize(name);
+
+	date.Randomaze();
+
+	expirationDate = rand() % 1000 + 1;
+
+	units = Units(rand() % 4);
+
+	count = (float) (rand() % 1000 + 1);
+	if (units == Units::KILOGRAMMS || units == Units::LITERS)
+		count += (float)(rand() % 1000) / 1000;
+
+	storeId = ShopId();
+
+	id = GetLastIdTxt();
+}
+
 std::istream& operator>> (std::istream& in, ProductString& product)
 {
 	in >> product.id;						//<< "id: " 
-
+	in >> product.date;					//<< "date: "
+	in >> product.count;					//<< "coutnt: " 
+	in >> product.expirationDate;			//<< "expirationDate: " 
+	int units = 0;
+	in >> units;
+	product.units = Units(units);				//<< "units: "
+	in >> product.storeId;					//<< "storeId: " 
+	
 	string result = "";
 	char c = in.get();
 	while (c = in.get()) {
@@ -65,25 +110,17 @@ std::istream& operator>> (std::istream& in, ProductString& product)
 	}
 	product.name = result;				//<< "name: " 
 
-	in >> product.date;					//<< "date: "
-	in >> product.count;					//<< "coutnt: " 
-	in >> product.expirationDate;			//<< "expirationDate: " 
-	int units = 0;
-	in >> units;
-	product.units = Units(units);				//<< "units: "
-	in >> product.storeId;					//<< "storeId: " 
-
 	return in;
 }
 
 std::ostream& operator<< (std::ostream& out, const ProductString& product){
-	out << product.id << '\n';						//<< "id: " 
-	out << product.name << '\n';					//<< "name: " 
-	out << product.date << '\n';					//<< "date: "
-	out << product.count << '\n';					//<< "coutnt: " 
-	out << product.expirationDate << '\n';			//<< "expirationDate: " 
-	out << (int)product.units << '\n';				//<< "units: "
-	out << product.storeId << endl;					//<< "storeId: " 
+	out << product.id << ' ';						//<< "id: " 
+	out << product.date << ' ';					//<< "date: "
+	out << product.count << ' ';					//<< "coutnt: " 
+	out << product.expirationDate << ' ';			//<< "expirationDate: " 
+	out << (int)product.units << ' ';				//<< "units: "
+	out << product.storeId << ' ';					//<< "storeId: " 
+	out << product.name << endl;					//<< "name: " 
 
 	return out;
 }
@@ -135,6 +172,31 @@ string Date::ToString(){
 		+ AddChar(hours) + ":" + AddChar(minutes);
 }
 
+int Date::DaysBetween(Date another){
+	return another.DaysSinceChristmas() - DaysSinceChristmas();
+}
+
+int Date::DaysSinceChristmas(){
+	int daysInMounth[12] = { 31,28 + (int)(year % 4 == 0), 31,30,31,30,31,31,30,31,30,31 };
+	int result = (int) (365.2468f * year);
+	for (int i = 0; i < mounth; i++)
+		result += daysInMounth[i];
+	result += day;
+
+	return result;
+}
+
+void Date::Randomaze(){
+	year = rand() % 20 + 2000;
+	mounth = rand() % 12 + 1;
+	day = rand() % 31 + 1;
+	hours = rand() % 24;
+	minutes = rand() % 60;
+
+	if (!SetDate(day, mounth, year, hours, minutes))
+		Randomaze();
+}
+
 std::ostream& operator<< (std::ostream& out, const Date& date) {
 	out << (int)date.day << ' ' << (int)date.mounth << ' ' <<
 		date.year << ' ' << (int)date.hours << ' ' << (int)date.minutes;
@@ -168,6 +230,18 @@ Store::Store() {
 	id = 0;
 	maxProductCount = 0;
 	rating = 0;
+}
+
+void Store::Randomaze(){
+	StringRandom(name);
+
+	StringRandom(adress);
+
+	rating = (float)(rand() % 100 / 100) + rand() % 10;
+
+	maxProductCount = rand() % (int)1e7 + 1;
+
+	id = GetLastIdStore();
 }
 
 #pragma endregion

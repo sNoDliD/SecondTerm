@@ -7,24 +7,51 @@ using std::ofstream;
 string path;
 int lastId = 0;
 
-void CreatePathTxt() {
+int lastTakeId = 0;
+size_t lastTakeBytes = 0;
+
+void CreatePathTxt(const char* txtBase) {
     path = string(pathToDataBases);
+
     path.append(txtBase);
+    path.append(".txt");
 }
 
 
 void SetLastIdTxt() {
-    int i = 0;
-    ProductString* product;
     ofstream out(path, std::iostream::app);
     out.close();
-    while (true) {
-        ProductString* product = TakeProductTxt(i++);
-        if (product == nullptr)
+
+    ifstream in(path);
+    int i = 0, enterCounter = 0;
+    while (true){
+        in.seekg(i--, in.end);
+        char c = in.get();
+        if (c == '\n')
+            enterCounter++;
+        if (in.fail()) {
+            if (enterCounter == 1 * 2) {
+                in.close();
+                in.open(path);
+                i += 2;
+                in.seekg(i, in.end);
+                in >> lastId;
+                break;
+            }
+            if (i < -10) {
+                lastId = 0;
+                break;
+            }
+            in.close();
+            in.open(path);
+            continue;
+        }
+        if (enterCounter == 2 * 2) {    //why it read '\n' twice...?
+            in >> lastId;
             break;
-        lastId = product->id;
-        delete product;
+        }
     }
+    in.close();
 }
 
 int GetLastIdTxt() {
@@ -39,20 +66,42 @@ void AppendProductTxt(ProductString* product) {
 }
 
 ProductString* TakeProductTxt(int indexInFile) {
-    ProductString* product = new ProductString;
     ifstream in;
     in.open(path);
-    for (int i = 0; i <= indexInFile; i++)
-        in >> *product;
-    if (in.eof()) {
-        delete product;
-        product = nullptr;
+    if (!in.is_open())
+        return nullptr;
+    ProductString* product = new ProductString();
+    int i = 0;
+    if (indexInFile > lastTakeId) {
+        i = lastTakeId + 1;
+        in.seekg(lastTakeBytes, in.beg);
+    }
+    for (; i <= indexInFile; i++) {
+        if (in.eof()) {
+            delete product;
+            product = nullptr; 
+            break;
+        }
+            in >> *product;
+    }
+    if (!in.eof()) {
+        lastTakeId = indexInFile;
+        lastTakeBytes = in.tellg();
     }
     in.close();
     return product;
 }
 
+void AddTxtRandom(int n) {
+	ProductString* newProduct = new ProductString();
 
+    for (int i = 0; i < n; i++) {
+        newProduct->Randomaze();
+        AppendProductTxt(newProduct);
+    }
+
+	delete newProduct;
+}
 
 //
 //if (remove(argv[1]) == -1)
