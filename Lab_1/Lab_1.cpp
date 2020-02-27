@@ -1,7 +1,8 @@
 ﻿#include "Header.h"
 
+
 int main(){
-	Initialization();
+	Initialization(); 
 
 	try {
 		StartMenu();
@@ -10,7 +11,7 @@ int main(){
 		cout << "Program breaks: ";
 		switch (e)
 		{
-		case -1: 
+		case -1:
 			cout << "File truoble";
 			break;
 		default:
@@ -19,7 +20,7 @@ int main(){
 		}
 		cout << endl;
 	}
-	
+
 	MemoryFree();
 	return 0;
 }

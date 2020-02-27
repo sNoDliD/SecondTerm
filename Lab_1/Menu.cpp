@@ -34,8 +34,12 @@ void SearchName();
 void SearchAmount();
 void SearchDate();
 
-int shopId = 0; 
-int ShopId() {
+int Delete();
+
+int Modify();
+
+size_t shopId = 0;
+size_t ShopId() {
 	return shopId;
 }
 Mode workMode = Mode::WAIT;
@@ -129,12 +133,14 @@ private:
 			ViewItems(key);
 
 			code = _getch();
+			if (code == 224) {
+				code = _getch();
+				if (code == 80)
+					key++;
+				if (code == 72)
+					key--;
 
-			if (code == 80)
-				key++;
-			if (code == 72)
-				key--;
-
+			}
 			if (code == 27)
 				return (int) MenuMode::PressEsc;
 		}
@@ -221,18 +227,25 @@ int Interactive(int mode) {
 
 	if (shopId == (int)MenuMode::EXIT)
 		return (int)MenuMode::REPEATE;
-	//todo: switct workmode
-	CreatePathBin(to_string(shopId).c_str());
-	CreatePathTxt(to_string(shopId).c_str());
-	SetLastIdBin();
-	SetLastIdTxt();
+
+	cout << "Wait for initialization..." << endl;
+	switch (workMode) {
+	case Mode::TXT:
+		CreatePathTxt(to_string(shopId).c_str());
+		SetLastIdTxt();
+		break;
+	case Mode::BIN:
+		CreatePathBin(to_string(shopId).c_str());
+		SetLastIdBin();
+		break;
+	}
 
 	all = new vector<MenuItem>;
 	(*all).push_back(MenuItem("Add", Add));
 	(*all).push_back(MenuItem("Show all", ShowAll));
 	(*all).push_back(MenuItem("Search", Search));
-	(*all).push_back(MenuItem("Modify"));
-	(*all).push_back(MenuItem("Delete"));
+	(*all).push_back(MenuItem("Modify", Modify));
+	(*all).push_back(MenuItem("Delete", Delete));
 
 	menu = new Menu("Interactive mode", all);
 	(*menu).DoMenu();
@@ -297,13 +310,9 @@ int ShopCreate() {
 	Store* newStore = new Store();
 	if (type == 1) {
 		cout << "Enter count of add stores: ";
-		int n;
+		size_t n;
 		InputStr(n);
-		while (n < 1) {
-			SetColor(6, "\tcount > 0!");
-			InputStr(n);
-		}
-		for (int i = 0; i < n; i++) {
+		for (size_t i = 0; i < n; i++) {
 			newStore->Randomaze();
 			AppendStore(newStore);
 		}
@@ -328,10 +337,6 @@ int ShopCreate() {
 
 		cout << "Enter shop's maximum of product count: ";
 		InputStr(newStore->maxProductCount);
-		while (newStore->maxProductCount < 1) {
-			SetColor(6, "\tReal?) Product count should be more than 0. Try again");
-			InputStr(newStore->maxProductCount);
-		}
 
 		newStore->id = GetLastIdStore();
 
@@ -536,12 +541,8 @@ int Add() {
 
 	if (type == 1) {
 		cout << "Enter count of add products: ";
-		int n;
+		size_t n;
 		InputStr(n);
-		while (n < 1) {
-			SetColor(6, "\tcount > 0!");
-			InputStr(n);
-		}
 		switch (workMode)
 		{
 		case Mode::VECTOR:
@@ -581,8 +582,10 @@ bool ShowAllVector() {
 	bool isProductFind = false;
 	while (true) {
 		Product* product = TakeProductVector(i++);
-		if (product == nullptr) break;
-		if (product->storeId == shopId) {
+		if (product == nullptr) 
+			break;
+		bool deletedProduct = product->id == 0;
+		if (product->storeId == shopId && !deletedProduct) {
 			isProductFind = true;
 			cout << product->ToString() << endl;
 		}
@@ -598,8 +601,11 @@ bool ShowAllTxt() {
 		ProductString* product = TakeProductTxt(i++);
 		if (product == nullptr) 
 			break;
-		isProductFind = true;
-		cout << product->ToString() << endl;
+		bool deletedProduct = product->id == 0;
+		if (!deletedProduct) {
+			isProductFind = true;
+			cout << product->ToString() << endl;
+		}
 		delete product;
 	}
 	return isProductFind;
@@ -612,8 +618,11 @@ bool ShowAllBin() {
 		Product* product = TakeProductBin(i++);
 		if (product == nullptr) 
 			break;
-		isProductFind = true;
-		cout << product->ToString() << endl;
+		bool deletedProduct = product->id == 0;
+		if (!deletedProduct) {
+			isProductFind = true;
+			cout << product->ToString() << endl;
+		}
 		delete product;
 	}
 	return isProductFind;
@@ -654,12 +663,13 @@ void SearchName() {
 
 		while (true) {
 			Product* product = TakeProductVector(i++);
-			if (product && SubString(product->name, name) && product->storeId == shopId) {
+			if (product == nullptr)
+				break;
+			bool deletedProduct = product->id == 0;
+			if (SubString(product->name, name) && product->storeId == shopId && !deletedProduct) {
 				cout << product->ToString() << endl;
 				totalFind++;
 			}
-			if (product == nullptr)
-				break;
 		}
 	}
 		break;
@@ -670,12 +680,13 @@ void SearchName() {
 
 		while (true) {
 			ProductString* product = TakeProductTxt(i++);
-			if (product && SubString(product->name, name)) {
+			if (product == nullptr)
+				break;
+			bool deletedProduct = product->id == 0;
+			if (SubString(product->name, name)) {
 				cout << product->ToString() << endl;
 				totalFind++;
 			}
-			if (product == nullptr)
-				break;
 			delete product;
 		}
 	}
@@ -687,12 +698,13 @@ void SearchName() {
 
 		while (true) {
 			Product* product = TakeProductBin(i++);
-			if (product && SubString(product->name, name) && product->storeId == shopId) {
+			if (product == nullptr)
+				break;
+			bool deletedProduct = product->id == 0;
+			if (SubString(product->name, name) && product->storeId == shopId) {
 				cout << product->ToString() << endl;
 				totalFind++;
 			}
-			if (product == nullptr)
-				break;
 			delete product;
 		}
 	}
@@ -705,36 +717,34 @@ void SearchName() {
 
 void SearchAmount() {
 	cout << "Enter min count of product: ";
-	int count;
+	size_t count;
 	InputStr(count);
-	while (count < 1) {
-		SetColor(6, "count > 0!");
-		InputStr(count);
-	}
 	system("cls");
 	size_t totalFind = 0, i = 0;
 	switch (workMode){
 	case Mode::VECTOR: {
 		while (true) {
 			Product* product = TakeProductVector(i++);
-			if (product && product->count >= count && product->storeId == shopId) {
+			if (product == nullptr)
+				break;
+			bool deletedProduct = product->id == 0;
+			if (product->count >= count && product->storeId == shopId && !deletedProduct) {
 				cout << product->ToString() << endl;
 				totalFind++;
 			}
-			if (product == nullptr)
-				break;
 		}
 	}
 		break;
 	case Mode::TXT: {
 		while (true) {
 			ProductString* product = TakeProductTxt(i++);
-			if (product && product->count >= count) {
+			if (product == nullptr)
+				break;
+			bool deletedProduct = product->id == 0;
+			if (product->count >= count) {
 				cout << product->ToString() << endl;
 				totalFind++;
 			}
-			if (product == nullptr)
-				break;
 			delete product;
 		}
 	}
@@ -742,12 +752,13 @@ void SearchAmount() {
 	case Mode::BIN: {
 		while (true) {
 			Product* product = TakeProductBin(i++);
-			if (product && product->count >= count) {
+			if (product == nullptr)
+				break;
+			bool deletedProduct = product->id == 0;
+			if (product->count >= count) {
 				cout << product->ToString() << endl;
 				totalFind++;
 			}
-			if (product == nullptr)
-				break;
 			delete product;
 		}
 	}
@@ -769,24 +780,27 @@ void SearchDate() {
 	case Mode::VECTOR: {
 		while (true) {
 			Product* product = TakeProductVector(i++);
-			if (product && product->date.DaysBetween(*date) >= product->expirationDate && product->storeId == shopId) {
+			if (product == nullptr)
+				break;
+			bool deletedProduct = product->id == 0;
+			if (product->date.DaysBetween(*date) >= product->expirationDate 
+				&& product->storeId == shopId && !deletedProduct) {
 				cout << product->ToString() << endl;
 				totalFind++;
 			}
-			if (product == nullptr)
-				break;
 		}
 	}
 					 break;
 	case Mode::TXT: {
 		while (true) {
 			ProductString* product = TakeProductTxt(i++);
-			if (product && product->date.DaysBetween(*date) >= product->expirationDate) {
+			if (product == nullptr)
+				break;
+			bool deletedProduct = product->id == 0;
+			if (product->date.DaysBetween(*date) >= product->expirationDate) {
 				cout << product->ToString() << endl;
 				totalFind++;
 			}
-			if (product == nullptr)
-				break;
 			delete product;
 		}
 	}
@@ -794,12 +808,13 @@ void SearchDate() {
 	case Mode::BIN: {
 		while (true) {
 			Product* product = TakeProductBin(i++);
-			if (product && product->date.DaysBetween(*date) >= product->expirationDate) {
+			if (product == nullptr)
+				break;
+			bool deletedProduct = product->id == 0;
+			if (product->date.DaysBetween(*date) >= product->expirationDate) {
 				cout << product->ToString() << endl;
 				totalFind++;
 			}
-			if (product == nullptr)
-				break;
 			delete product;
 		}
 	}
@@ -844,61 +859,88 @@ int Search() {
 #pragma endregion 
 
 
-//maybe add this in search
-void f1() {
-	string name = "";
+#pragma region Modify
 
-	while (true)
-	{
-		int a = _getch();
-		switch (a)
-		{
-		case 224:
-		{
-			int b = _getch();
-			switch (b)
-			{
-			case 72: //up
-			case 80: //down
-			case 77:
-			case 75:
-				break;
-			case 224: //p
-				name += 'p';
-				break;
-			case 8: //backspace
-				break;
-			case 27: //esc
-				break;
-			case 13: //enter
-				break;
-			default:
-				name += "p";
-				name += char(b);
-				break;
-			}
-			break;
-		}
-		case 8: //backspace
-			if (name.length() > 0)
-				name.pop_back();
-			break;
-		case 27: //esc
-			return;
-			break;
-		case 13: //enter
-			break;
-		default:
-			name += a;
-			break;
-		}
-		system("cls");
-		cout << name << endl << "ESC to exit";
+int ModifyField(int field) {
 
-		COORD cr;
-		HANDLE hnd = GetStdHandle(STD_OUTPUT_HANDLE);
-		//cr.X = name.size();
-		cr.Y = 0;
-		SetConsoleCursorPosition(hnd, cr);
-	}
+
+	return (int)MenuMode::REPEATE;
 }
+
+int Modify() {
+	size_t id;
+	cout << "Enter id of product: ";
+	InputStr(id);
+	bool deleteSuccess = false, findProduct = false;
+
+	vector <MenuItem>* all = new vector<MenuItem>;
+
+	switch (workMode)
+	{
+	case Mode::VECTOR:
+		deleteSuccess = DeleteVector(id);
+		break;
+	case Mode::TXT:
+		deleteSuccess = DeleteTxt(id);
+		break;
+	case Mode::BIN: {
+		Product* product = TakeProductBin(id - 1);
+		if (product == nullptr || product->id == 0) {
+			findProduct = false;
+			break;
+		}
+		(*all).push_back(MenuItem("Name: " + string(product->name), ModifyField, 1));
+		(*all).push_back(MenuItem("Amount: " + FloatToString(product->count), ModifyField, 2));
+		(*all).push_back(MenuItem("Type: " + string(UnitsToString((int)product->units)), ModifyField, 3));
+		(*all).push_back(MenuItem("Date: " + product->date.ToString(), ModifyField, 4));
+		(*all).push_back(MenuItem("Life time: " + to_string(product->expirationDate), ModifyField, 5));
+	}
+		break;
+	}
+	if (findProduct) {
+		Menu* menu = new Menu("Select a field to change: ", all);
+		int result = (*menu).DoMenu();
+		cout << result << endl;//
+		system("pause");//
+		delete menu;
+	}
+	if (deleteSuccess)
+		cout << "\n\nSuccess" << endl;
+	else
+		cout << "\n\nFailed to delete product." << endl;
+	system("pause");
+	return (int)MenuMode::REPEATE;
+}
+
+#pragma endregion
+
+
+#pragma region Delete
+
+int Delete() {
+	size_t id;
+	cout << "Enter id of product: ";
+	InputStr(id);
+	bool deleteSuccess = false;
+	switch (workMode)
+	{
+	case Mode::VECTOR:
+		deleteSuccess = DeleteVector(id);
+		break;
+	case Mode::TXT:
+		deleteSuccess = DeleteTxt(id);
+		break;
+	case Mode::BIN:
+		deleteSuccess = DeleteBin(id);
+		break;
+	}
+	if (deleteSuccess)
+		cout << "\n\nSuccess" << endl;
+	else
+		cout << "\n\nFailed to delete product." << endl;
+	system("pause");
+	return (int)MenuMode::REPEATE;
+}
+
+#pragma endregion
+

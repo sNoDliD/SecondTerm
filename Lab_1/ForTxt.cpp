@@ -3,12 +3,13 @@
 
 using std::ifstream;
 using std::ofstream;
-
+using std::fstream;
+using std::streampos;
 string path;
-int lastId = 0;
+size_t lastId = 0;
 
-int lastTakeId = 0;
-size_t lastTakeBytes = 0;
+size_t lastTakeId = 0;
+streampos lastTakeBytes = 0;
 
 void CreatePathTxt(const char* txtBase) {
     path = string(pathToDataBases);
@@ -16,7 +17,6 @@ void CreatePathTxt(const char* txtBase) {
     path.append(txtBase);
     path.append(".txt");
 }
-
 
 void SetLastIdTxt() {
     ofstream out(path, std::iostream::app);
@@ -30,9 +30,9 @@ void SetLastIdTxt() {
         if (c == '\n')
             enterCounter++;
         if (in.fail()) {
+            in.close();
+            in.open(path);
             if (enterCounter == 1 * 2) {
-                in.close();
-                in.open(path);
                 i += 2;
                 in.seekg(i, in.end);
                 in >> lastId;
@@ -42,8 +42,6 @@ void SetLastIdTxt() {
                 lastId = 0;
                 break;
             }
-            in.close();
-            in.open(path);
             continue;
         }
         if (enterCounter == 2 * 2) {    //why it read '\n' twice...?
@@ -54,26 +52,26 @@ void SetLastIdTxt() {
     in.close();
 }
 
-int GetLastIdTxt() {
+size_t GetLastIdTxt() {
     return ++lastId;
 }
 
 void AppendProductTxt(ProductString* product) {
     ofstream out(path, std::iostream::app);
-    out << *product;
-
+    if(product->id != 0)
+        out << *product;
     out.close();
 }
 
-ProductString* TakeProductTxt(int indexInFile) {
+ProductString* TakeProductTxt(size_t indexInFile) {
     ifstream in;
     in.open(path);
     if (!in.is_open())
         return nullptr;
     ProductString* product = new ProductString();
-    int i = 0;
-    if (indexInFile > lastTakeId) {
-        i = lastTakeId + 1;
+    size_t i = 0;
+    if (indexInFile > lastTakeId - 1) {
+        i = lastTakeId;
         in.seekg(lastTakeBytes, in.beg);
     }
     for (; i <= indexInFile; i++) {
@@ -82,20 +80,20 @@ ProductString* TakeProductTxt(int indexInFile) {
             product = nullptr; 
             break;
         }
-            in >> *product;
+        in >> *product;
     }
     if (!in.eof()) {
-        lastTakeId = indexInFile;
+        lastTakeId = indexInFile + 1;
         lastTakeBytes = in.tellg();
     }
     in.close();
     return product;
 }
 
-void AddTxtRandom(int n) {
+void AddTxtRandom(size_t n) {
 	ProductString* newProduct = new ProductString();
 
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
         newProduct->Randomaze();
         AppendProductTxt(newProduct);
     }
@@ -103,9 +101,63 @@ void AddTxtRandom(int n) {
 	delete newProduct;
 }
 
-//
-//if (remove(argv[1]) == -1)
-//printf("Remove Error");
-////
-//if (rename(argv[1], argv[2]) != 0)
-//printf("Rename Error");
+void CopyFileTxt(const char* path, const char* newPath) {
+    ifstream infile(path);
+    ofstream outfile(newPath);
+    char c;
+    while (true) {
+        infile.get(c);
+        if (infile.eof())
+            break;
+        outfile.put(c);
+    }
+    outfile.close();
+    infile.close();
+}
+
+bool ModifyTxt(size_t id, ProductString* productModify) {
+    if (id == 0 || id > lastId)
+        return false;
+    bool result = false;
+
+    string pathOld = path;
+    string newPath = pathOld.erase(path.length() - 4) + "(clone).txt";
+    CopyFileTxt(path.c_str(), newPath.c_str());
+
+    ofstream out(path);
+    ifstream in(newPath);
+    lastId = lastTakeId = 0;
+    lastTakeBytes = 0;
+    ProductString* product = new ProductString();
+    while (true){
+        product->id = 0;
+        in >> *product;
+        if (product->id == 0)
+            break;
+        if (product->id == id) {
+            result = true;
+            cout << '\n' << product->ToString();
+            if (productModify->id != 0) {
+                productModify->id = ++lastId;
+                out << *productModify;
+            }
+        }
+        else {
+            product->id = ++lastId;
+            out << *product;
+        }
+    }
+    delete product;
+    in.close();
+    out.close();
+    remove(newPath.c_str());
+    return result;
+}
+
+bool DeleteTxt(size_t id) {
+    ProductString* product = new ProductString;
+    bool result = ModifyTxt(id, product);
+    delete product;
+
+    return result;
+}

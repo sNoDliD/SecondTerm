@@ -27,7 +27,7 @@ string Product::ToString() {
 	return result;
 }
 
-void Product::Randomaze(int id){
+void Product::Randomaze(size_t id){
 	StringRandom(name);
 	Capitalize(name);
 
@@ -90,9 +90,13 @@ void ProductString::Randomaze(){
 	id = GetLastIdTxt();
 }
 
-std::istream& operator>> (std::istream& in, ProductString& product)
-{
+std::istream& operator>> (std::istream& in, ProductString& product){
 	in >> product.id;						//<< "id: " 
+	if (product.id == 0) {
+		while (in.get() != '\n')
+			if (in.eof()) break;
+		return in;
+	}
 	in >> product.date;					//<< "date: "
 	in >> product.count;					//<< "coutnt: " 
 	in >> product.expirationDate;			//<< "expirationDate: " 
@@ -239,7 +243,7 @@ void Store::Randomaze(){
 
 	rating = (float)(rand() % 100 / 100) + rand() % 10;
 
-	maxProductCount = rand() % (int)1e7 + 1;
+	maxProductCount = rand() % (size_t)1e7 + 1;
 
 	id = GetLastIdStore();
 }

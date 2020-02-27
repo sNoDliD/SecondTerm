@@ -3,8 +3,28 @@
 
 char* path = nullptr;
 char* pathStore = nullptr;
-int lastIdStore = 0;
-int lastIdProduct = 0;
+size_t lastIdStore = 0;
+size_t lastIdProduct = 0;
+
+void CopyFileBin(const char* path, const char* newPath) {
+    FILE* infile;
+    fopen_s(&infile, path, "rb");
+    FILE* outfile;
+    fopen_s(&outfile, newPath, "wb");
+    char c;
+    if (infile != 0 && outfile != 0) {
+        while (true) {
+            fread_s(&c, 1, sizeof(char), 1, infile);
+            if (feof(infile))
+                break;
+            fwrite(&c, sizeof(char), 1, outfile);
+        }
+        fclose(infile);
+        fclose(outfile);
+    }
+    else
+        throw - 1;
+}
 
 void CreatePathBin(const char* binBase) {
     size_t len = strlen(pathToDataBases) + strlen(binBase) + 5;
@@ -28,24 +48,50 @@ void DeletePathBin() {
 }
 
 void SetLastIdBin() {
-    Product* product = new Product();
     FILE* file;
-    fopen_s(&file, path , "rb");
-    if (file == 0) {
-        fopen_s(&file, path, "ab");
-        lastIdProduct = 0;
-    }
-    else {
-        fseek(file, 0 - sizeof(Product), SEEK_END);
-        fread(product, sizeof(Product), 1, file);
-        lastIdProduct = product->id; //set default = 0
-    }
+    fopen_s(&file, path, "ab");
     if (file != 0)
         fclose(file);
-    delete product;
+    else
+        throw - 1;
+
+    size_t len = strlen(path) + strlen("(clone)") + 1;
+    char* newPath = new char[len];
+    strcpy_s(newPath, len, path);
+    newPath[strlen(path) - 4] = '\0';
+    strcat_s(newPath, len, "(clone).bin");
+    CopyFileBin(path, newPath);
+
+    FILE* outfile;
+    fopen_s(&outfile, path, "wb");
+    FILE* infile;
+    fopen_s(&infile, newPath, "rb");
+
+    lastIdProduct = 0;
+    if (infile != 0 && outfile != 0) {
+        Product* temp = new Product;;
+        while (true) {
+            fread_s(temp, sizeof(Product), sizeof(Product),1, infile);
+           
+            if (feof(infile))
+                break;
+            if (temp->id != 0) {
+                temp->id = ++lastIdProduct;
+                fwrite(temp, sizeof(Product), 1, outfile);
+            }
+        }
+        if (temp != nullptr)
+            delete temp;
+        fclose(infile);
+        fclose(outfile);
+    }
+    else
+        throw - 1;
+    remove(newPath);
+    delete[] newPath;
 }
 
-int GetLastIdBin() {
+size_t GetLastIdBin() {
     return ++lastIdProduct;
 }
 
@@ -67,7 +113,7 @@ void SetLastIdStore() {
     delete s;
 }
 
-int GetLastIdStore() {
+size_t GetLastIdStore() {
     return ++lastIdStore;
 }
 
@@ -82,7 +128,7 @@ void AppendProductBin(Product* product) {
         throw -1;
 }
 
-Product* TakeProductBin(int indexInFile) {
+Product* TakeProductBin(size_t indexInFile) {
     if (lastIdProduct == 0) return nullptr;
 
     Product* product = new Product();
@@ -114,7 +160,7 @@ void AppendStore(Store* store) {
         throw -1;
 }
 
-Store* TakeStore(int indexInFile) {
+Store* TakeStore(size_t indexInFile) {
     if (lastIdStore == 0) return nullptr;
 
     Store* store = new Store();
@@ -135,26 +181,47 @@ Store* TakeStore(int indexInFile) {
     return store;
 }
 
-void modify(Store* a, int id) {
-    FILE* file;
-    fopen_s(&file, pathStore, "r+b");
-
-    if (file != 0) {
-        fseek(file, (id - 1) * sizeof(Store), SEEK_SET);
-        fwrite(new Store(), sizeof(Store), 1, file);
-        fclose(file);
-    }
-    else
-        throw - 1;
-}
-
-void AddBinRandom(int n) {
+void AddBinRandom(size_t n) {
     Product* newProduct = new Product();
 
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
         newProduct->Randomaze(GetLastIdBin());
         AppendProductBin(newProduct);
     }
 
     delete newProduct;
+}
+
+bool ModifyBin(size_t id, Product* product) {
+    if (id == 0 || id > lastIdProduct)
+        return false;
+    bool result = false;
+
+    FILE* file;
+    fopen_s(&file, path, "r+b");
+    if(file != 0) {
+        Product* temp = new Product;
+        fseek(file, (id - 1) * sizeof(Product), SEEK_SET);
+        fread(temp, sizeof(Product), 1, file);
+        fseek(file, 0 - sizeof(Product), SEEK_CUR);
+        if (temp->id != 0) {
+            fwrite(product, sizeof(Product), 1, file);
+            cout << '\n' << temp->ToString();
+            result = true;
+        }
+        delete temp;
+        fclose(file);
+    }
+    else
+        throw - 1;
+
+    return result;
+}
+
+bool DeleteBin(size_t id) {
+    Product* product = new Product;
+    bool result = ModifyBin(id, product);
+    delete product;
+
+    return result;
 }

@@ -5,7 +5,7 @@ using std::vector;
 
 vector<Product> arr;
 
-int GetLastIdVector() {
+size_t GetLastIdVector() {
 	return arr.size();
 }
 
@@ -19,13 +19,33 @@ Product* TakeProductVector(size_t indexInVector) {
 	return &arr[indexInVector];
 }
 
-void AddVectorRandom(int n) {
+void AddVectorRandom(size_t n) {
     Product* newProduct = new Product();
 
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
         newProduct->Randomaze(GetLastIdVector() + 1);
         AppendProductVector(newProduct);
     }
 
     delete newProduct;
+}
+
+bool ModifyVector(size_t id, Product* product) {
+    if (id > arr.size() || arr[id - 1].id == 0)
+        return false;
+    arr[id - 1] = *product;
+    arr[id - 1].id = id;
+
+    return true;
+}
+
+bool DeleteVector(size_t id) {
+    if (id > arr.size() || arr[id - 1].id == 0)
+        return false;
+    if (arr[id - 1].id != 0) {
+        cout << '\n' << arr[id - 1].ToString();
+        arr[id - 1].id = 0;
+        return true;
+    }
+    return false;
 }

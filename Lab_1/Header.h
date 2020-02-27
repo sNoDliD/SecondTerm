@@ -46,7 +46,7 @@ enum class Units : byte {
 
 const char* UnitsToString(int unitId);
 
-struct Date {
+struct Date { // byte -> int (cheak on benchmark)
 	byte2 year : 12;
 	byte mounth : 5;
 	byte day : 6;
@@ -66,31 +66,31 @@ struct Date {
 #pragma pack(push, 1)
 class Product {
 public:
-	int id;					//4
+	size_t id;					//4
 	char name[nameSize];			//27
 	float count;			//4
 	Date date;				//6
 	byte2 expirationDate;	//2
-	int storeId;			//4
-	Units units;			//1		
+	size_t storeId;			//4
+	Units units;			//1
 
 	Product();
 
 	string ToString();
 
-	void Randomaze(int id);
+	void Randomaze(size_t id);
 };
 #pragma pack (pop)
 
 class ProductString {
 public:
-	int id;					//4
+	size_t id;					//4
 	string name;
 	float count;			//4
 	Date date;				//6
 	byte2 expirationDate;	//2
-	int storeId;			//4
-	Units units;			//1		
+	size_t storeId;			//4
+	Units units;			//1
 
 	ProductString();
 
@@ -106,11 +106,11 @@ public:
 #pragma pack (push, 1)
 class Store {
 public:
-	int id;					//4
+	size_t id;					//4
 	char name[nameSize] = { '\0' };	//27
 	char adress[nameSize] = { '\0' };	//27
 	float rating;			//4
-	int maxProductCount;	//4
+	size_t maxProductCount;	//4
 
 	Store();
 
@@ -122,7 +122,7 @@ public:
 
 
 #pragma region Menu
-int ShopId();
+size_t ShopId();
 void SetColor(int color = 14);
 void SetColor(int color , const char* str);
 
@@ -139,32 +139,40 @@ void CreatePathStore();
 void DeletePathBin();
 
 void SetLastIdStore();
-int GetLastIdStore();
+size_t GetLastIdStore();
 
 void SetLastIdBin();
-int GetLastIdBin();
+size_t GetLastIdBin();
 
-int GetLastIdVector();
+size_t GetLastIdVector();
 
 void SetLastIdTxt();
-int GetLastIdTxt();
+size_t GetLastIdTxt();
 
 void AppendProductVector(Product* product);
 Product* TakeProductVector(size_t indexInVector);
 
 void AppendProductTxt(ProductString* product);
-ProductString* TakeProductTxt(int indexInFile);
+ProductString* TakeProductTxt(size_t indexInFile);
 
 void AppendStore(Store*);
-Store* TakeStore(int indexInFile);
+Store* TakeStore(size_t indexInFile);
 
 void AppendProductBin(Product* product);
-Product* TakeProductBin(int indexInFile);
+Product* TakeProductBin(size_t indexInFile);
 
-void AddVectorRandom(int n = 1);
-void AddTxtRandom(int n = 1);
-void AddBinRandom(int n = 1);
+void AddVectorRandom(size_t n = 1);
+void AddTxtRandom(size_t n = 1);
+void AddBinRandom(size_t n = 1);
 
+bool ModifyVector(size_t id, Product* product);
+bool DeleteVector(size_t id);
+
+bool ModifyBin(size_t id, Product* product);
+bool DeleteBin(size_t id);
+
+bool ModifyTxt(size_t id, ProductString* product);
+bool DeleteTxt(size_t id);
 #pragma endregion
 
 
@@ -173,13 +181,21 @@ void AddBinRandom(int n = 1);
 void Initialization();
 void MemoryFree();
 
-void InputStr(char*);
-void InputStr(Date&);
+void InputStr(char* str);
+void InputStr(Date& str);
+void InputStr(size_t& str);
 template <typename T>
-void InputStr(T& str);
-template void InputStr<int>(int&);
-template void InputStr(float&);
-template void InputStr(byte2&);
+void InputStr(T& str) {
+	cin >> str;
+	while (cin.fail()) {
+		cin.clear();
+		cin.ignore(INT64_MAX, '\n');
+		SetColor(6, "\tIncorrect input. Try again");
+		cin >> str;
+	}
+	cin.clear();
+	cin.ignore(INT64_MAX, '\n');
+}
 
 string FloatToString(float str, const size_t accuracy = 3);
 

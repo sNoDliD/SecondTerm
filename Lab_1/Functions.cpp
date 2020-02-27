@@ -1,10 +1,14 @@
 #include "Header.h"
+#include <fstream>
+
+using std::ifstream;
+using std::ofstream;
 
 void Initialization() {
 	cout << "Wait for initialization..." << endl;
 	CreatePathStore();
 	srand((unsigned int) time(0));
-	SetLastIdStore(); //Todo: clear and setLastId
+	SetLastIdStore();
 }
 
 void MemoryFree() {
@@ -119,24 +123,24 @@ void InputStr(Date& date) {
 			cin.clear();
 			cin.ignore(INT64_MAX, '\n');
 		}
-		else {
-			if (date.SetDate(day, mounth, year, hour, min))
+		else if (date.SetDate(day, mounth, year, hour, min))
 				return;
-		}
 		SetColor(6, "\tIncorrect input. Try again");
 	}
 }
-template <typename T>
-void InputStr<T>(T& str) {
-	cin >> str;
-	while (cin.fail()){
+
+void InputStr(size_t& str){
+	long int temp;
+	cin >> temp;
+	while (cin.fail() || temp < 1) {
 		cin.clear();
 		cin.ignore(INT64_MAX, '\n');
-		SetColor(6, "\tIncorrect input. Try again");
-		cin >> str;
+		SetColor(6, "\tIncorrect input. Enter value > 0");
+		cin >> temp;
 	}
 	cin.clear();
 	cin.ignore(INT64_MAX, '\n');
+	str = (size_t)temp;
 }
 
 string FloatToString(float str, const size_t accuracy) {
@@ -190,6 +194,7 @@ string FloatToString(float str, const size_t accuracy) {
 	return result;
 }
 
+
 /*Ask list
  3. templete...
  4. ...params
@@ -199,25 +204,19 @@ string FloatToString(float str, const size_t accuracy) {
 
 	Todo: *all vector delete
 	todo: think zero product in txt
+	*/
 
-1. Modify
-2. Delete
-3. Shop Find
-4. Demonstration
-5. Benchmark
+	/* Worksheet
+
+	--1. Modify
+	-----2. Delete
+	--3. Shop Find
+	4. Demonstration
+	5. Benchmark
 
  */
 
 /*Notes
-
-(-9%) Implementing custom function or type that repeats features of standard library
-datetime -> use std::tm
-parse datetime -> use std::get_time or implement using sscanf
-datetime to string, output -> use strftime
-
-
-for (auto strList : { "hello", "world" })
-
 int f() {
 	return 0;
 }
