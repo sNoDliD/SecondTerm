@@ -79,9 +79,9 @@ void StringRandom(string& str, size_t minSize, size_t maxSize) {
 }
 
 void StringRandom(char* str, size_t minSize, size_t maxSize) {
-	if (minSize > maxSize)
+	if (minSize > maxSize - 1)
 		minSize = 0;
-	size_t len = rand() % (maxSize - minSize + 1) + minSize;
+	size_t len = rand() % (maxSize - minSize) + minSize;
 	for (size_t i = 0; i < len; i++)
 		str[i] = rand() % ('z' - 'a') + 'a';
 	str[len] = '\0';
@@ -108,9 +108,7 @@ void InputStr(char* str) {
 	while (cin.fail()) {
 		cin.clear();
 		cin.ignore(INT64_MAX, '\n');
-		SetColor(6);
-		cout << "\tSo big word, enter less than " << (int)nameSize << " symbols" << endl;
-		SetColor();
+		SetColor(6, "\tSo big word, enter less than ", (int)nameSize, " symbols\n");
 		cin.getline(str, nameSize);
 	}
 }
@@ -125,7 +123,7 @@ void InputStr(Date& date) {
 		}
 		else if (date.SetDate(day, mounth, year, hour, min))
 				return;
-		SetColor(6, "\tIncorrect input. Try again");
+		SetColor(6, "\tIncorrect input. Try again\n");
 	}
 }
 
@@ -135,7 +133,7 @@ void InputStr(size_t& str){
 	while (cin.fail() || temp < 1) {
 		cin.clear();
 		cin.ignore(INT64_MAX, '\n');
-		SetColor(6, "\tIncorrect input. Enter value > 0");
+		SetColor(6, "\tIncorrect input. Enter value > 0\n");
 		cin >> temp;
 	}
 	cin.clear();
@@ -201,9 +199,10 @@ string FloatToString(float str, const size_t accuracy) {
 
 6. what faster == or <
 
+7. void (*f)() = SwitchMode(workMode, AddVector, AddTxt, AddBin);
+
 
 	Todo: *all vector delete
-	todo: think zero product in txt
 	*/
 
 	/* Worksheet

@@ -6,7 +6,7 @@ using std::to_string;
 
 Product::Product() {
 	id = 0;
-	for (byte i = 0; i < nameSize; ++i) {
+	for (size_t i = 0; i < nameSize; ++i) { //try byte
 		name[i] = '\0';
 	}
 	name[nameSize - 1] = '\0';
@@ -124,7 +124,7 @@ std::ostream& operator<< (std::ostream& out, const ProductString& product){
 	out << product.expirationDate << ' ';			//<< "expirationDate: " 
 	out << (int)product.units << ' ';				//<< "units: "
 	out << product.storeId << ' ';					//<< "storeId: " 
-	out << product.name << endl;					//<< "name: " 
+	out << product.name << '\n';					//<< "name: " 
 
 	return out;
 }

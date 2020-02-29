@@ -1,9 +1,11 @@
 #ifndef MAIN_HEADER_ALL_CPP
 #define MAIN_HEADER_ALL_CPP
 
+#include "Menu.h"
 #include <iostream>
 #include <string>
 #include <time.h>
+#include <initializer_list>
 
 #pragma region UsingAndTypedef
 
@@ -22,7 +24,6 @@ typedef unsigned short int byte2;
 
 const byte nameSize = 27;
 const char pathToDataBases[] = "DataBases/";
-//const char pathToStores[] = "Stores/";
 const char storeBase[] = "Store.bin";
 
 #pragma endregion
@@ -121,11 +122,8 @@ public:
 #pragma endregion
 
 
-#pragma region Menu
+#pragma region Interactive
 size_t ShopId();
-void SetColor(int color = 14);
-void SetColor(int color , const char* str);
-
 int StartMenu();
 
 #pragma endregion
@@ -190,7 +188,7 @@ void InputStr(T& str) {
 	while (cin.fail()) {
 		cin.clear();
 		cin.ignore(INT64_MAX, '\n');
-		SetColor(6, "\tIncorrect input. Try again");
+		SetColor(6, "\tIncorrect input. Try again\n");
 		cin >> str;
 	}
 	cin.clear();
@@ -207,6 +205,44 @@ bool SubString(const char* main, const char* compare);
 
 void StringRandom(string& str, size_t minSize = 5, size_t maxSize = nameSize);
 void StringRandom(char* str, size_t minSize = 5, size_t maxSize = nameSize);
+
+template <typename T>
+T SwitchFuncOld(int mode) {
+	return nullptr;
+}
+
+template <typename T, typename... Ttail>
+T SwitchFuncOld(int mode, T Fnow, Ttail... Tail) {
+	if (--mode == 0)
+		return Fnow;
+	return SwitchFuncOld<T>(mode, Tail...);
+}
+
+template <typename T>
+T SwitchFunc(int mode,	std::initializer_list<T> Func) {
+	size_t size = Func.size();
+	if (mode == 0 || mode > size)
+		return nullptr;
+	return *(Func.begin() + mode - 1);
+	
+}
+
+template <typename T>
+int SetIndex(T element, std::initializer_list<T> list) {
+	size_t size = list.size();
+	for (size_t i = 0; i < size; i++) {
+		if (element == *(list.begin() + i))
+			return i + 1;
+	}
+	return 0;
+}
+
+
+
+template <typename T>
+T Out(T product) {
+	return product;
+}
 
 #pragma endregion
 

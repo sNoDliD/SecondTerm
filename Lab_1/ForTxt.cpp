@@ -5,6 +5,7 @@ using std::ifstream;
 using std::ofstream;
 using std::fstream;
 using std::streampos;
+
 string path;
 size_t lastId = 0;
 
@@ -16,6 +17,8 @@ void CreatePathTxt(const char* txtBase) {
 
     path.append(txtBase);
     path.append(".txt");
+
+    SetLastIdTxt();
 }
 
 void SetLastIdTxt() {
@@ -23,10 +26,11 @@ void SetLastIdTxt() {
     out.close();
 
     ifstream in(path);
-    int i = 0, enterCounter = 0;
+    short enterCounter = 0, i = -1;
+    char c = '\0';
     while (true){
         in.seekg(i--, in.end);
-        char c = in.get();
+        in.get(c);
         if (c == '\n')
             enterCounter++;
         if (in.fail()) {
@@ -129,6 +133,7 @@ bool ModifyTxt(size_t id, ProductString* productModify) {
     lastId = lastTakeId = 0;
     lastTakeBytes = 0;
     ProductString* product = new ProductString();
+
     while (true){
         product->id = 0;
         in >> *product;
@@ -147,6 +152,7 @@ bool ModifyTxt(size_t id, ProductString* productModify) {
             out << *product;
         }
     }
+
     delete product;
     in.close();
     out.close();
