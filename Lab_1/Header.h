@@ -7,6 +7,7 @@
 #include <time.h>
 #include <initializer_list>
 
+
 #pragma region UsingAndTypedef
 
 using std::cout;
@@ -47,6 +48,7 @@ enum class Units : byte {
 
 const char* UnitsToString(int unitId);
 
+#pragma pack(push, 1)
 struct Date { // byte -> int (cheak on benchmark)
 	byte2 year : 12;
 	byte mounth : 5;
@@ -57,12 +59,14 @@ struct Date { // byte -> int (cheak on benchmark)
 	bool SetDate(int day, int mounth, int year, int hours, int min);
 	friend std::ostream& operator<< (std::ostream&, const Date&);
 	friend std::istream& operator>> (std::istream& in, Date& data);
+	friend bool operator < (Date& first, Date& second);
 	string ToString();
 
 	int DaysBetween(Date another);
 	int DaysSinceChristmas();
 	void Randomaze();
 };
+#pragma pack (pop)
 
 #pragma pack(push, 1)
 class Product {
@@ -79,7 +83,7 @@ public:
 
 	string ToString();
 
-	void Randomaze(size_t id);
+	void Randomaze();
 };
 #pragma pack (pop)
 
@@ -116,6 +120,8 @@ public:
 	Store();
 
 	void Randomaze();
+
+	string ToString();
 };
 #pragma pack(pop)
 
@@ -123,8 +129,11 @@ public:
 
 
 #pragma region Interactive
-size_t ShopId();
+
 int StartMenu();
+
+size_t ShopId(); 
+size_t ShopMaxCount();
 
 #pragma endregion
 
@@ -135,17 +144,6 @@ void CreatePathTxt(const char* txtPath);
 void CreatePathBin(const char* binPath);
 void CreatePathStore();
 void DeletePathBin();
-
-void SetLastIdStore();
-size_t GetLastIdStore();
-
-void SetLastIdBin();
-size_t GetLastIdBin();
-
-size_t GetLastIdVector();
-
-void SetLastIdTxt();
-size_t GetLastIdTxt();
 
 void AppendProductVector(Product* product);
 Product* TakeProductVector(size_t indexInVector);
@@ -171,6 +169,7 @@ bool DeleteBin(size_t id);
 
 bool ModifyTxt(size_t id, ProductString* product);
 bool DeleteTxt(size_t id);
+
 #pragma endregion
 
 
@@ -180,8 +179,44 @@ void Initialization();
 void MemoryFree();
 
 void InputStr(char* str);
-void InputStr(Date& str);
+void InputStr(Date& str, const bool withoutTime = false);
 void InputStr(size_t& str);
+void InputStr(byte2& str);
+void InputStr(string& str);
+
+string FloatToString(float str, size_t accuracy = 3);
+
+void Capitalize(string& str);
+void Capitalize(char* str);
+
+bool SubString(const string& main, const string& compare);
+bool SubString(const char* main, const char* compare);
+
+void StringRandom(string& str, size_t minSize = 5, size_t maxSize = nameSize);
+void StringRandom(char* str, size_t minSize = 5, size_t maxSize = nameSize);
+
+bool SetValue(const char* preMessage, Units& value); 
+void SetValue(float& value, Units& units);
+
+#pragma endregion
+
+
+#pragma region Template World
+
+template <typename T>
+bool ZeroToTen(T& str) {
+	if (str >= 0 && str <= 10)
+		return true;
+	return false;
+}
+
+template <typename T>
+bool Positive(T& str) {
+	if (str > 0)
+		return true;
+	return false;
+}
+
 template <typename T>
 void InputStr(T& str) {
 	cin >> str;
@@ -195,36 +230,24 @@ void InputStr(T& str) {
 	cin.ignore(INT64_MAX, '\n');
 }
 
-string FloatToString(float str, const size_t accuracy = 3);
-
-void Capitalize(string& str);
-void Capitalize(char* str);
-
-bool SubString(const string& main, const string& compare);
-bool SubString(const char* main, const char* compare);
-
-void StringRandom(string& str, size_t minSize = 5, size_t maxSize = nameSize);
-void StringRandom(char* str, size_t minSize = 5, size_t maxSize = nameSize);
-
 template <typename T>
-T SwitchFuncOld(int mode) {
-	return nullptr;
-}
-
-template <typename T, typename... Ttail>
-T SwitchFuncOld(int mode, T Fnow, Ttail... Tail) {
-	if (--mode == 0)
-		return Fnow;
-	return SwitchFuncOld<T>(mode, Tail...);
+void SetValue(const char* preMessage, T& value, bool (*condition)(T&) = nullptr,
+	const char*errorMessage = "\tIncorrect input. Try again\n", const char* endMessage = "(perfect)\n\n") {
+	cout << preMessage;
+	InputStr(value);
+	while (condition && !condition(value)) {
+		SetColor(6, errorMessage);
+		InputStr(value);
+	}
+	cout << endMessage;
 }
 
 template <typename T>
-T SwitchFunc(int mode,	std::initializer_list<T> Func) {
-	size_t size = Func.size();
-	if (mode == 0 || mode > size)
+T SwitchFunc(int mode, std::initializer_list<T> Func) {
+	int size = Func.size();
+	if (mode <= 0 || mode > size)
 		return nullptr;
 	return *(Func.begin() + mode - 1);
-	
 }
 
 template <typename T>
@@ -237,13 +260,6 @@ int SetIndex(T element, std::initializer_list<T> list) {
 	return 0;
 }
 
-
-
-template <typename T>
-T Out(T product) {
-	return product;
-}
-
 #pragma endregion
 
-#endif //MAIN_HEADER_ALL_CPP
+#endif 

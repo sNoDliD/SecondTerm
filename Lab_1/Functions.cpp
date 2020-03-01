@@ -8,7 +8,6 @@ void Initialization() {
 	cout << "Wait for initialization..." << endl;
 	CreatePathStore();
 	srand((unsigned int) time(0));
-	SetLastIdStore();
 }
 
 void MemoryFree() {
@@ -33,8 +32,8 @@ void Capitalize(char* str) {
 
 bool SubString(const char* main, const char* compare) {
 	size_t mainLen = strlen(main), compareLen = strlen(compare);
-	if (mainLen < compareLen)
-		return false;
+	if (compareLen == 0) return true;
+	if (mainLen < compareLen) return false;
 
 	for (size_t i = 0; i <= mainLen - compareLen; i++) {
 		bool result = true;
@@ -43,17 +42,16 @@ bool SubString(const char* main, const char* compare) {
 				result = false;
 				break;
 			}
-		if (result == false)
-			continue;
+		if (result == false) continue;
 		return true;
 	}
 	return false;
 }
 
 bool SubString(const string& main, const string& compare) {
+	if (compare == "") return true;
 	size_t mainLen = main.length(), compareLen = compare.length();
-	if (mainLen < compareLen)
-		return false;
+	if (mainLen < compareLen) return false;
 
 	for (size_t i = 0; i <= mainLen - compareLen; i++) {
 		bool result = true;
@@ -62,8 +60,7 @@ bool SubString(const string& main, const string& compare) {
 				result = false;
 				break;
 			}
-		if (result == false)
-			continue;
+		if (result == false) continue;
 		return true;
 	}
 	return false;
@@ -113,27 +110,36 @@ void InputStr(char* str) {
 	}
 }
 
-void InputStr(Date& date) {
-	int day, mounth, year, hour, min;
-	while (true) {
+void InputStr(Date& date, const bool withoutTime) {
+	int day, mounth, year, hour = 0, min = 0;
+	while (withoutTime == false) {
 		int count = scanf_s("%d.%d.%d %d:%d", &day, &mounth, &year, &hour, &min);
 		if (cin.fail() || count != 5) {
 			cin.clear();
 			cin.ignore(INT64_MAX, '\n');
 		}
-		else if (date.SetDate(day, mounth, year, hour, min))
-				return;
-		SetColor(6, "\tIncorrect input. Try again\n");
+		else if (date.SetDate(day, mounth, year, hour, min)) return;
+		SetColor(6, "\nIncorrect input. Or try enter in format: day.mounth.year hour:minutes\n");
 	}
+	while (withoutTime == true) {
+		int count = scanf_s("%d.%d.%d", &day, &mounth, &year);
+		if (cin.fail() || count != 3) {
+			cin.clear();
+			cin.ignore(INT64_MAX, '\n');
+		}
+		else if (date.SetDate(day, mounth, year, hour, min)) return;
+		SetColor(6, "\tIncorrect input. Or try enter in format: day.mounth.year \n");
+	}
+
 }
 
 void InputStr(size_t& str){
-	long int temp;
+	long long temp;
 	cin >> temp;
-	while (cin.fail() || temp < 1) {
+	while (cin.fail() || temp < 1 || temp > UINT32_MAX) {
 		cin.clear();
 		cin.ignore(INT64_MAX, '\n');
-		SetColor(6, "\tIncorrect input. Enter value > 0\n");
+		SetColor(6, "\tIncorrect input. Enter value [1,", UINT32_MAX, "]\n");
 		cin >> temp;
 	}
 	cin.clear();
@@ -141,86 +147,103 @@ void InputStr(size_t& str){
 	str = (size_t)temp;
 }
 
-string FloatToString(float str, const size_t accuracy) {
-	string result = "";
-	int whole = int(str);
-	str -= whole;
-
-	while (whole > 0) {
-		char now = whole % 10 + '0';
-		result = now + result;
-		whole /= 10;
+void InputStr(byte2& str){
+	int temp;
+	cin >> temp;
+	while (cin.fail() || temp < 1 || temp > UINT16_MAX) {
+		cin.clear();
+		cin.ignore(INT64_MAX, '\n');
+		SetColor(6, "\tIncorrect input. Enter value [1,", UINT16_MAX, "]\n");
+		cin >> temp;
 	}
+	cin.clear();
+	cin.ignore(INT64_MAX, '\n');
+	str = (byte2)temp;
+}
 
-	whole = int((1 + str) * pow(10, accuracy + 1));
+void InputStr(string& str){
+	getline(cin, str);
+}
 
-	string extra = "";
-	bool over = false;
-	bool first = true;
+string FloatToString(float str, size_t accuracy) {
+	if (accuracy > 6) accuracy = 6;
+	if (str < 0) return "-" + FloatToString(-str, accuracy);
+	float up = roundf(str * pow(10, accuracy));
+	if (up == 0) return "0";
 
-	for (size_t i = 0; i < accuracy + 1; i++) {
-		char now = whole % 10 + '0';
-		bool add = true;
+	string result = std::to_string(up);
+	while (result.back() == '0') result.pop_back();
+	if (result.back() == '.') result.pop_back();
 
-		if (first && now == '0' && !over)
-			add = false;
-		else if (now > '4' && i == 0) {
-			over = true;
-			add = false;
-		}
-		else if (over) {
-			now++;
-			over = false;
-			if (now == '9' + 1) {
-				add = false;
-				over = true;
-			}
-		}
-		if (add) {
-			first = false;
-			extra = now + extra;
-		}
-		whole /= 10;
-	}
+	int over = result.size() - accuracy - 1;
+	while (over++ < 0) result.insert(0, "0");
+	result.insert(result.size() - accuracy, ".");
 
-	if (result == "")
-		result = "0";
-	while (extra.length() > accuracy)
-		extra.pop_back();
-	if (extra != "")
-		result += "." + extra;
+	while (result.back() == '0') result.pop_back();
+	if (result.back() == '.') result.pop_back();
 	return result;
 }
 
+bool SetValue(const char* preMessage, Units& value){
+	vector <MenuItem>* all = new vector<MenuItem>;
+	all->push_back(MenuItem("Bag", nullptr, (int)Units::BAG));
+	all->push_back(MenuItem("Kilogramms", nullptr, (int)Units::KILOGRAMMS));
+	all->push_back(MenuItem("Liters", nullptr, (int)Units::LITERS));
+	all->push_back(MenuItem("Piece", nullptr, (int)Units::PIECE));
+
+	Menu* menu = new Menu(preMessage, all);
+	int unitId = menu->DoMenu();
+	delete menu;
+
+	if (unitId == (int)MenuMode::EXIT) return false;
+	value = Units(unitId);
+	return true;
+}
+
+void SetValue(float& value, Units& units){
+	cout << "Enter product's count in " << UnitsToString((int)units) << ": ";
+	InputStr(value);
+	if (units == Units::BAG || units == Units::PIECE)
+		value = trunc(value);
+}
 
 /*Ask list
- 3. templete...
- 4. ...params
+
+template <typename T>
+T SwitchFuncOld(int mode) {
+	return nullptr;
+}
+
+template <typename T, typename... Ttail>
+T SwitchFuncOld(int mode, T Fnow, Ttail... Tail) {
+	if (--mode == 0)
+		return Fnow;
+	return SwitchFuncOld<T>(mode, Tail...);
+}
+
 
 6. what faster == or <
-
-7. void (*f)() = SwitchMode(workMode, AddVector, AddTxt, AddBin);
-
+7. (*menu). or menu->
 
 	Todo: *all vector delete
 	*/
 
-	/* Worksheet
+/* Worksheet
+reorganize vector
 
-	--1. Modify
-	-----2. Delete
 	--3. Shop Find
 	4. Demonstration
 	5. Benchmark
 
  */
 
-/*Notes
-int f() {
-	return 0;
-}
-template<typename... T>
-int f(float x, float y, const T&... tail) {
-	return int(x*x + y*y - R*R < 0.0001) + f(tail...);
-}
+/* Benchmark screenplay
+
+open base
+add n pdocuct
+show by name, by amound, by date
+delete n/5 from end
+show all
+(reorganize)
+
 */

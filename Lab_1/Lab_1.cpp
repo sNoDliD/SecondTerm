@@ -1,27 +1,12 @@
 ﻿#include "Header.h"
 
-void f1() {
-	cout << "f1" << endl;
-}
-void f2() {
-	cout << "f2" << endl;
-}
-void f3() {
-	cout << "f3" << endl;
-}
-
 
 int main(){
 	Initialization(); 
-	int a = 2;
 
-	SwitchFuncOld(2, f1, f2, f3)();
-	SwitchFunc(2, { f1, f2, f3 })();
-
-	system("pause");
 	try {
 		StartMenu();
-	} catch (int& e) {
+	} catch (int e) {
 		system("cls");
 		cout << "Program breaks: ";
 		switch (e){
@@ -30,6 +15,9 @@ int main(){
 			break;
 		case -2:
 			cout << "Enum error";
+			break;
+		case -3:
+			cout << "Switch not provided";
 			break;
 		default:
 			cout << "Just break with code " << e;

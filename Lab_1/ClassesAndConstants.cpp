@@ -27,7 +27,7 @@ string Product::ToString() {
 	return result;
 }
 
-void Product::Randomaze(size_t id){
+void Product::Randomaze(){
 	StringRandom(name);
 	Capitalize(name);
 
@@ -43,7 +43,7 @@ void Product::Randomaze(size_t id){
 
 	storeId = ShopId();
 
-	this->id = id;
+	id = rand() % (UINT32_MAX - 2) + 1;
 }
 
 #pragma endregion
@@ -87,7 +87,7 @@ void ProductString::Randomaze(){
 
 	storeId = ShopId();
 
-	id = GetLastIdTxt();
+	id = rand() % (UINT32_MAX - 2) + 1;
 }
 
 std::istream& operator>> (std::istream& in, ProductString& product){
@@ -224,6 +224,25 @@ std::istream& operator>> (std::istream& in, Date& date){
 	return in;
 }
 
+bool operator<(Date& first, Date& second){
+	if (first.year > second.year) return false;
+	if (first.year < second.year) return true;
+
+	if (first.mounth > second.mounth) return false;
+	if (first.mounth < second.mounth) return true;
+
+	if (first.day > second.day) return false;
+	if (first.day < second.day) return true;
+
+	if (first.hours > second.hours) return false;
+	if (first.hours < second.hours) return true;
+
+	if (first.minutes > second.minutes) return false;
+	if (first.minutes < second.minutes) return true;
+	
+	return false;
+}
+
 
 #pragma endregion
 
@@ -238,14 +257,25 @@ Store::Store() {
 
 void Store::Randomaze(){
 	StringRandom(name);
+	Capitalize(name);
 
 	StringRandom(adress);
 
-	rating = (float)(rand() % 100 / 100) + rand() % 10;
+	rating = (float)(rand() % 100) / 100 + rand() % 10;
 
-	maxProductCount = rand() % (size_t)1e7 + 1;
+	maxProductCount = rand() % (size_t)1e7 + (size_t)1e4;
 
-	id = GetLastIdStore();
+	id = rand() % (UINT32_MAX - 2) + 1;
+}
+
+string Store::ToString(){
+	string result = "\tStore #" + to_string(id) + "\n";
+	result += "Name: " + string(name) + "\n";
+	result += "Adress: " + string(adress)+ "\n";
+	result += "Rating: " + FloatToString(rating) + "\n";
+	result += "Max product count: " + to_string(maxProductCount) + "\n";
+
+	return result;
 }
 
 #pragma endregion

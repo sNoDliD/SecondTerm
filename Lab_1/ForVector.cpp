@@ -1,29 +1,27 @@
 #include "Header.h"
-#include <vector> 
 
-using std::vector;
-
-vector<Product> arr;
+static vector<Product> g_arr;
 
 size_t GetLastIdVector() {
-	return arr.size();
+	return g_arr.size();
 }
 
 void AppendProductVector(Product* product) {
-	arr.push_back(*product);
+    product->id = GetLastIdVector() + 1;
+	g_arr.push_back(*product);
 }
 
 Product* TakeProductVector(size_t indexInVector) {
-	if (indexInVector >= arr.size())
+	if (indexInVector >= g_arr.size())
 		return nullptr;
-	return &arr[indexInVector];
+	return &g_arr[indexInVector];
 }
 
 void AddVectorRandom(size_t n) {
     Product* newProduct = new Product();
 
     for (size_t i = 0; i < n; i++) {
-        newProduct->Randomaze(GetLastIdVector() + 1);
+        newProduct->Randomaze();
         AppendProductVector(newProduct);
     }
 
@@ -31,21 +29,25 @@ void AddVectorRandom(size_t n) {
 }
 
 bool ModifyVector(size_t id, Product* product) {
-    if (id > arr.size() || arr[id - 1].id == 0)
+    if (id > g_arr.size() || g_arr[id - 1].id == 0)
         return false;
-    arr[id - 1] = *product;
-    arr[id - 1].id = id;
+    g_arr[id - 1] = *product;
+    g_arr[id - 1].id = id;
 
     return true;
 }
 
 bool DeleteVector(size_t id) {
-    if (id > arr.size() || arr[id - 1].id == 0)
+    if (id > g_arr.size() || g_arr[id - 1].id == 0)
         return false;
-    if (arr[id - 1].id != 0) {
-        cout << '\n' << arr[id - 1].ToString();
-        arr[id - 1].id = 0;
+    if (g_arr[id - 1].id != 0) {
+        cout << '\n' << g_arr[id - 1].ToString();
+        g_arr[id - 1].id = 0;
         return true;
     }
     return false;
+}
+
+void Reorganize() {
+    //Todo: create...
 }
