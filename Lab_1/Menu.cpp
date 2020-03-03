@@ -18,7 +18,6 @@ MenuItem::MenuItem(string title, int (*FuncOfItem)(int), int value){
 
 void Menu::ViewItems(int key){
 	cout << title << "\n\n";
-
 	int j = 1;
 	for (vector <MenuItem> ::iterator i = menuItems.begin(); i < menuItems.end(); i++, j++){
 		if (key == j)
@@ -26,7 +25,6 @@ void Menu::ViewItems(int key){
 		else
 			cout <<"    "<< i->nameMenuItem << '\n';
 	}
-
 	SetColor(6, "\nPress ESC to go back or exit\n");
 }
 
@@ -34,6 +32,17 @@ void Menu::SetMenuItems(vector <MenuItem> items) {
 	menuItems = items;
 	for (int i = 0, n = items.size(); i < n; ++i)
 		menuItems[i].index = i + 1;
+}
+
+int Menu::ShowMenu(size_t choice, size_t& selectTime, size_t& switchTime){
+	for(size_t key = 1; key <= choice; key++) {
+		system("cls");
+		ViewItems(key);
+		Sleep(switchTime);
+	}
+	Sleep(selectTime);
+	system("cls");
+	return choice;
 }
 
 int Menu::ShowMenu() {
@@ -70,9 +79,16 @@ Menu::Menu(string title, vector <MenuItem>* items){
 	delete items;
 }
 
-int Menu::DoMenu(size_t sleepTime) { // todo: int sleepTime
+int Menu::DoMenu(initializer_list<size_t> order, size_t selectTime, size_t switchTime) {
+	int currentKey = 0, ans;
 	while (true) {
-		int ans = ShowMenu();
+		if(order.size() == 0) ans = ShowMenu();
+		else {
+			if (currentKey == order.size())
+				return (int)MenuMode::EXIT;
+			ans = ShowMenu(*(order.begin() + currentKey++), selectTime, switchTime);
+		}
+
 		bool isEmpty = menuItems.size() == 0;
 
 		if (ans == (int)MenuMode::PressEsc || isEmpty)
@@ -80,18 +96,15 @@ int Menu::DoMenu(size_t sleepTime) { // todo: int sleepTime
 
 		bool withoutFunc = (menuItems[ans - 1].Func == nullptr &&
 			menuItems[ans - 1].IntFunc == nullptr);
-		if (withoutFunc) {
-			return menuItems[ans - 1].returnValue;
-		}
+		if (withoutFunc)  return menuItems[ans - 1].returnValue;
+
 		int result;
-		if (menuItems[ans - 1].Func != nullptr) {
+		if (menuItems[ans - 1].Func != nullptr)
 			result = menuItems[ans - 1].Func();
-		}
-		else {
+		else 
 			result = menuItems[ans - 1].IntFunc(menuItems[ans - 1].returnValue);
-		}
-		if (result != (int)MenuMode::REPEATE)
-			return result;
+		if (result != (int)MenuMode::REPEATE) return result;
 	}
 }
+
 	

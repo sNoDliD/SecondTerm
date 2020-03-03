@@ -100,13 +100,24 @@ const char* UnitsToString(int unitId) {
 	}
 }
 
-void InputStr(char* str) {
-	cin.getline(str, nameSize);
-	while (cin.fail()) {
+bool ClearIfBreak(bool condition) {
+	if (cin.fail() || condition) {
 		cin.clear();
 		cin.ignore(INT64_MAX, '\n');
-		SetColor(6, "\tSo big word, enter less than ", (int)nameSize, " symbols\n");
-		cin.getline(str, nameSize);
+		return true;
+	}
+	return false;
+}
+
+void InputStr(char* str) {
+	cin.getline(str, g_nameSize);
+	if (ClearIfBreak()) {
+		SetColor(6, "\tSo big word, enter less than ", (int)g_nameSize, " symbols\n");
+		InputStr(str);
+	}
+	if (strlen(str) == 0) {
+		SetColor(6, "\tIt's not a word\n");
+		InputStr(str);
 	}
 }
 
@@ -114,61 +125,53 @@ void InputStr(Date& date, const bool withoutTime) {
 	int day, mounth, year, hour = 0, min = 0;
 	while (withoutTime == false) {
 		int count = scanf_s("%d.%d.%d %d:%d", &day, &mounth, &year, &hour, &min);
-		if (cin.fail() || count != 5) {
-			cin.clear();
-			cin.ignore(INT64_MAX, '\n');
-		}
-		else if (date.SetDate(day, mounth, year, hour, min)) return;
-		SetColor(6, "\nIncorrect input. Or try enter in format: day.mounth.year hour:minutes\n");
+		if (ClearIfBreak(count != 5) == false)
+			if (date.SetDate(day, mounth, year, hour, min)) break;
+		SetColor(6, "\tIncorrect input. Or try enter in format: day.mounth.year hour:minutes\n");
 	}
 	while (withoutTime == true) {
 		int count = scanf_s("%d.%d.%d", &day, &mounth, &year);
-		if (cin.fail() || count != 3) {
-			cin.clear();
-			cin.ignore(INT64_MAX, '\n');
-		}
-		else if (date.SetDate(day, mounth, year, hour, min)) return;
+		if(ClearIfBreak(count != 3) == false)
+			if (date.SetDate(day, mounth, year, hour, min)) break;
 		SetColor(6, "\tIncorrect input. Or try enter in format: day.mounth.year \n");
 	}
-
+	ClearIfBreak(true);
 }
 
 void InputStr(size_t& str){
 	long long temp;
 	cin >> temp;
-	while (cin.fail() || temp < 1 || temp > UINT32_MAX) {
-		cin.clear();
-		cin.ignore(INT64_MAX, '\n');
+	while (ClearIfBreak(temp < 1 || temp > UINT32_MAX)) {
 		SetColor(6, "\tIncorrect input. Enter value [1,", UINT32_MAX, "]\n");
 		cin >> temp;
 	}
-	cin.clear();
-	cin.ignore(INT64_MAX, '\n');
+	ClearIfBreak(true);
 	str = (size_t)temp;
 }
 
 void InputStr(byte2& str){
 	int temp;
 	cin >> temp;
-	while (cin.fail() || temp < 1 || temp > UINT16_MAX) {
-		cin.clear();
-		cin.ignore(INT64_MAX, '\n');
+	while (ClearIfBreak(temp < 1 || temp > UINT16_MAX)) {
 		SetColor(6, "\tIncorrect input. Enter value [1,", UINT16_MAX, "]\n");
 		cin >> temp;
 	}
-	cin.clear();
-	cin.ignore(INT64_MAX, '\n');
+	ClearIfBreak(true);
 	str = (byte2)temp;
 }
 
 void InputStr(string& str){
 	getline(cin, str);
+	if (str.size() == 0) {
+		SetColor(6, "\tIt's not a word\n");
+		InputStr(str);
+	}
 }
 
 string FloatToString(float str, size_t accuracy) {
 	if (accuracy > 6) accuracy = 6;
 	if (str < 0) return "-" + FloatToString(-str, accuracy);
-	float up = roundf(str * pow(10, accuracy));
+	float up = roundf(str * (float)pow(10, accuracy));
 	if (up == 0) return "0";
 
 	string result = std::to_string(up);
@@ -207,31 +210,9 @@ void SetValue(float& value, Units& units){
 		value = trunc(value);
 }
 
-/*Ask list
-
-template <typename T>
-T SwitchFuncOld(int mode) {
-	return nullptr;
-}
-
-template <typename T, typename... Ttail>
-T SwitchFuncOld(int mode, T Fnow, Ttail... Tail) {
-	if (--mode == 0)
-		return Fnow;
-	return SwitchFuncOld<T>(mode, Tail...);
-}
-
-
-6. what faster == or <
-7. (*menu). or menu->
-
-	Todo: *all vector delete
-	*/
 
 /* Worksheet
-reorganize vector
 
-	--3. Shop Find
 	4. Demonstration
 	5. Benchmark
 

@@ -3,7 +3,6 @@
 
 using std::ifstream;
 using std::ofstream;
-using std::fstream;
 using std::streampos;
 
 void SetLastIdTxt();
@@ -15,7 +14,7 @@ static size_t g_lastTakeId = 0;
 static streampos g_lastTakeBytes = 0;
 
 void CreatePathTxt(const char* txtBase) {
-    g_path = string(pathToDataBases);
+    g_path = string(g_pathToDataBases);
 
     g_path.append(txtBase);
     g_path.append(".txt");
@@ -58,17 +57,19 @@ void SetLastIdTxt() {
     in.close();
 }
 
-size_t GetLastIdTxt() {
-    return ++g_lastId;
+static size_t GetLastId(bool increase = false) {
+    if (increase) g_lastId++;
+    return g_lastId;
 }
 
-void AppendProductTxt(ProductString* product) {
-    ofstream out(g_path, std::iostream::app);
-    product->id = GetLastIdTxt();
-    if (product->id != 0 && out.is_open()) {
-        out << *product;
-    }
+bool AppendProductTxt(ProductString* product) {
+    ofstream out(g_path, std::iostream::app); 
+    if (!out.is_open()) throw - 1;
+    if (GetLastId() >= ShopMaxCount()) return false;
+    product->id = GetLastId(true);
+    out << *product;
     out.close();
+    return true;
 }
 
 ProductString* TakeProductTxt(size_t indexInFile) {
@@ -98,18 +99,28 @@ ProductString* TakeProductTxt(size_t indexInFile) {
     return product;
 }
 
-void AddTxtRandom(size_t n) {
+bool AddTxtRandom(size_t n) {
+    ofstream out(g_path, std::iostream::app);
+    if (!out.is_open()) throw - 1;
 	ProductString* newProduct = new ProductString();
 
     for (size_t i = 0; i < n; i++) {
         newProduct->Randomaze();
-        AppendProductTxt(newProduct);
+        if (GetLastId() >= ShopMaxCount()){
+            delete newProduct;
+            out.close();
+            return false;
+        }
+        newProduct->id = GetLastId(true);
+        out << *newProduct;
     }
 
 	delete newProduct;
+    out.close();
+    return true;
 }
 
-void CopyFileTxt(const char* path, const char* newPath) {
+static void CopyFileTxt(const char* path, const char* newPath) {
     ifstream infile(path);
     ofstream outfile(newPath);
     char c;
@@ -168,4 +179,17 @@ bool DeleteTxt(size_t id) {
     delete product;
 
     return result;
+}
+
+bool FreeShopTxt(size_t shopId) {
+    size_t len = strlen(g_pathToDataBases) + strlen(to_string(shopId).c_str()) + 5;
+    char* path = new char[len];
+    strcpy_s(path, len, g_pathToDataBases);
+    strcat_s(path, len, to_string(shopId).c_str());
+    strcat_s(path, len, ".txt");
+
+    int resust = remove(path);
+    delete[] path;
+    if (resust == 0) return true;
+    return false;
 }

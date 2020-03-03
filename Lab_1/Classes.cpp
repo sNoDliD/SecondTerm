@@ -1,21 +1,16 @@
 #include "Header.h"
 
-using std::to_string;
 
 #pragma region Product
 
-Product::Product() {
-	id = 0;
-	for (size_t i = 0; i < nameSize; ++i) { //try byte
-		name[i] = '\0';
-	}
-	name[nameSize - 1] = '\0';
-	count = 0;
-	date = Date();
-	units = Units(0);
-	expirationDate = 0;
-	storeId = 0;
-}
+Product::Product() :
+	id(0),
+	name("\0"),
+	count(0),
+	date(),
+	units(),
+	expirationDate(0),
+	storeId(0) {}
 
 string Product::ToString() {
 	string result = "\tProduct #" + to_string(id) + "\n";
@@ -51,15 +46,14 @@ void Product::Randomaze(){
 
 #pragma region ProductString
 
-ProductString::ProductString() {
-	id = 0;
-	name = "";
-	count = 0;
-	date = Date();
-	units = Units(0);
-	expirationDate = 0;
-	storeId = 0;
-}
+ProductString::ProductString() :
+	id(0),
+	name(""),
+	count(0),
+	date(),
+	units(),
+	expirationDate(0),
+	storeId(0){}
 
 string ProductString::ToString() {
 	string result = "\tProduct #" + to_string(id) + "\n";
@@ -91,19 +85,19 @@ void ProductString::Randomaze(){
 }
 
 std::istream& operator>> (std::istream& in, ProductString& product){
-	in >> product.id;						//<< "id: " 
+	in >> product.id;						
 	if (product.id == 0) {
 		while (in.get() != '\n')
 			if (in.eof()) break;
 		return in;
 	}
-	in >> product.date;					//<< "date: "
-	in >> product.count;					//<< "coutnt: " 
-	in >> product.expirationDate;			//<< "expirationDate: " 
+	in >> product.date;					
+	in >> product.count;					
+	in >> product.expirationDate;			
 	int units = 0;
 	in >> units;
-	product.units = Units(units);				//<< "units: "
-	in >> product.storeId;					//<< "storeId: " 
+	product.units = Units(units);				
+	in >> product.storeId;					
 	
 	string result = "";
 	char c = in.get();
@@ -112,19 +106,19 @@ std::istream& operator>> (std::istream& in, ProductString& product){
 			break;
 		result += c;
 	}
-	product.name = result;				//<< "name: " 
+	product.name = result;				
 
 	return in;
 }
 
 std::ostream& operator<< (std::ostream& out, const ProductString& product){
-	out << product.id << ' ';						//<< "id: " 
-	out << product.date << ' ';					//<< "date: "
-	out << product.count << ' ';					//<< "coutnt: " 
-	out << product.expirationDate << ' ';			//<< "expirationDate: " 
-	out << (int)product.units << ' ';				//<< "units: "
-	out << product.storeId << ' ';					//<< "storeId: " 
-	out << product.name << '\n';					//<< "name: " 
+	out << product.id << ' ';						
+	out << product.date << ' ';				
+	out << product.count << ' ';		
+	out << product.expirationDate << ' ';		
+	out << (int)product.units << ' ';	
+	out << product.storeId << ' ';			
+	out << product.name << '\n';
 
 	return out;
 }
@@ -134,30 +128,32 @@ std::ostream& operator<< (std::ostream& out, const ProductString& product){
 
 #pragma region Date
 
-Date::Date() {
-	year = 0;
-	mounth = 0;
-	day = 0;
-	hours = 0;
-	minutes = 0;
-}
+Date::Date():
+	year(0),
+	mounth(0),
+	day(0),
+	hours(0),
+	minutes(0) {}
 
-bool Date::SetDate(int day, int mounth, int year, int hours, int min)
-{
+bool Date::Correct() {
 	if (mounth > 12 || mounth < 1) return false;
 	if (year < 0) return false;
-	if (min > 59 || min < 0) return false;
+	if (minutes > 59 || minutes < 0) return false;
 	if (hours > 23 || hours < 0) return false;
 	int daysInMounth[12] = { 31,28 + (int)(year % 4 == 0), 31,30,31,30,31,31,30,31,30,31 };
 	if (day < 1 || day > daysInMounth[mounth - 1]) return false;
 
+	return true;
+}
+
+bool Date::SetDate(int day, int mounth, int year, int hours, int min){
 	this->day = day;
 	this->mounth = mounth;
 	this->year = year;
 	this->hours = hours;
 	this->minutes = min;
 
-	return true;
+	return Correct();
 }
 
 template< typename T>
@@ -167,13 +163,13 @@ string AddChar(T value, size_t minCount = 2, char returnValue = '0') {
 		if ((int)value < pow(10, (i + 1))) 
 			result += returnValue;
 
-	result += std::to_string((int)value);
+	result += to_string((int)value);
 	return result;
 }
 
 string Date::ToString(){
-	return AddChar(day) + "." + AddChar(mounth) + "." + AddChar(year, 4) + " " 
-		+ AddChar(hours) + ":" + AddChar(minutes);
+	return AddChar(day) + "." + AddChar(mounth) + "." + AddChar(year, 4) + 
+		" " + AddChar(hours) + ":" + AddChar(minutes);
 }
 
 int Date::DaysBetween(Date another){
@@ -243,25 +239,26 @@ bool operator<(Date& first, Date& second){
 	return false;
 }
 
-
 #pragma endregion
 
 
 #pragma region Shop
 
-Store::Store() {
-	id = 0;
-	maxProductCount = 0;
-	rating = 0;
-}
+Store::Store() :
+	id(0),
+	maxProductCount(0),
+	rating(0),
+	name("\0"),
+	adress("\0"){}
 
 void Store::Randomaze(){
 	StringRandom(name);
 	Capitalize(name);
 
 	StringRandom(adress);
+	Capitalize(adress);
 
-	rating = (float)(rand() % 100) / 100 + rand() % 10;
+	rating = (float)(rand() % 1000) / 1000 + rand() % 10;
 
 	maxProductCount = rand() % (size_t)1e7 + (size_t)1e4;
 

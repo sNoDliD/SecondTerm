@@ -2,6 +2,7 @@
 #define MENU_HEADER_CLASS_AND_COLOR
 
 #include <Windows.h>
+#include <initializer_list>
 #include <conio.h>
 #include <vector>
 #include <string>
@@ -13,6 +14,7 @@ using std::endl;
 
 using std::vector;
 using std::string;
+using std::initializer_list;
 
 enum class MenuMode {
 	EXIT = -10000,
@@ -62,10 +64,13 @@ private:
 
 	int ShowMenu();
 
+	int ShowMenu(size_t choice, size_t& selectTime, size_t& switchTime);
+
 public:
 	Menu(string title = "#", vector <MenuItem>* items = new vector<MenuItem>);
 
-	int DoMenu(size_t sleepTime = 0);
+	int DoMenu(initializer_list<size_t> order = initializer_list<size_t>(),
+		size_t selectTime = 800, size_t switchTime = 550);
 };
 
 

@@ -2,7 +2,7 @@
 
 
 int main(){
-	Initialization(); 
+	Initialization();
 
 	try {
 		StartMenu();
