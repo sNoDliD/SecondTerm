@@ -166,10 +166,11 @@ static size_t GetLastIdStore(bool increase = false) {
     return g_lastIdStore;
 }
 
-void CreatePathStore() {
-    size_t len = strlen(g_storeBase) + 1;
+void CreatePathStore(const char* storeBase) {
+    size_t len = strlen(storeBase) + 1;
+    if (g_pathStore) delete[] g_pathStore;
     g_pathStore = new char[len];
-    strcpy_s(g_pathStore, len, g_storeBase);
+    strcpy_s(g_pathStore, len, storeBase);
 
     SetLastIdStore();
 }
@@ -216,10 +217,10 @@ Store* TakeStore(size_t indexInFile) {
     return store;
 }
 
-bool FreeShops() {
-    int resust = remove(g_pathStore);
-    if (resust == 0) {
-        SetLastIdStore();
+bool FreeShops(const char* pathStore, bool reCreate) {
+    int resust = remove(pathStore);
+    if (resust == 0 && reCreate) {
+        CreatePathStore(pathStore);
         return true;
     }
     return false;

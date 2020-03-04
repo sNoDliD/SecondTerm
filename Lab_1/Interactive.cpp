@@ -5,7 +5,6 @@
 
 static int ChoiceMode();
 static int Interactive(int mode);
-static int Benchmark();
 
 static bool ShopMenuCreate();
 static int ShopChoice();
@@ -45,6 +44,8 @@ int StartMenu() {
 }
 
 int ChoiceMode() {
+	Initialization();
+
 	vector<MenuItem>* all = new vector<MenuItem>;
 	all->push_back(MenuItem("Vector", Interactive, (int)Mode::VECTOR));
 	all->push_back(MenuItem("Text", Interactive, (int)Mode::TXT));
@@ -234,7 +235,7 @@ int ShopCreate() {
 
 int DeleteAllShop() {
 	system("cls");
-	if (FreeShops()) {
+	if (FreeShops(g_storeBase)) {
 		cout << "All shops delete...\n";
 	}
 	else

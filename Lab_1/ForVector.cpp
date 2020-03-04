@@ -62,7 +62,7 @@ bool DeleteVector(size_t id) {
     return false;
 }
 
-void ReorganizeVector() {
+size_t ReorganizeVector() {
     size_t now = 0;
     for (size_t i = 0, len = GetLastId(); i < len; i++) 
         if (g_arr[i].id != 0) {
@@ -71,4 +71,12 @@ void ReorganizeVector() {
         }
     for (size_t i = now, len = GetLastId(); i < len; i++)
         g_arr.pop_back();
+    return GetLastId();
+}
+
+bool FreeVector() {
+    for (size_t len = GetLastId(); len > 0; len--)
+        g_arr.pop_back();
+
+    return true;
 }

@@ -170,12 +170,15 @@ int Benchmark();
 
 void CreatePathTxt(const char* txtPath);
 void CreatePathBin(const char* binPath);
-void CreatePathStore();
+void CreatePathStore(const char* storeBase);
+
+void SetLastIdBin();
 
 void DeletePathBin(); 
+bool FreeVector();
 bool FreeShopBin(size_t shopId);
-bool FreeShopTxt(size_t shopId);
-bool FreeShops();
+bool FreeShopTxt(size_t shopId); 
+bool FreeShops(const char* pathStore, bool reCreate = true);
 
 bool AppendProductVector(Product* product);
 Product* TakeProductVector(size_t indexInVector);
@@ -202,7 +205,7 @@ bool DeleteBin(size_t id);
 bool ModifyTxt(size_t id, ProductString* product);
 bool DeleteTxt(size_t id);
 
-void ReorganizeVector();
+size_t ReorganizeVector();
 
 #pragma endregion
 

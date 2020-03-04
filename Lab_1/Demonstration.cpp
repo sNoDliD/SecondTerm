@@ -74,6 +74,8 @@ static void SetValue(float& value, Units& units) {
 #pragma region Start
 
 int Demonstration() {
+	Initialization();
+
 	vector<MenuItem>* all = new vector<MenuItem>;
 	all->push_back(MenuItem("Vector", Interactive, (int)Mode::VECTOR));
 	all->push_back(MenuItem("Text", Interactive, (int)Mode::TXT));
@@ -111,7 +113,7 @@ int Interactive(int mode) {
 
 int DeleteAllShop() {
 	system("cls");
-	if (FreeShops()) {
+	if (FreeShops(g_storeBase)) {
 		cout << "All shops delete...\n";
 	}
 	else

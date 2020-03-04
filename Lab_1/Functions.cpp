@@ -6,7 +6,7 @@ using std::ofstream;
 
 void Initialization() {
 	cout << "Wait for initialization..." << endl;
-	CreatePathStore();
+	CreatePathStore(g_storeBase);
 	srand((unsigned int) time(0));
 }
 
@@ -209,22 +209,3 @@ void SetValue(float& value, Units& units){
 	if (units == Units::BAG || units == Units::PIECE)
 		value = trunc(value);
 }
-
-
-/* Worksheet
-
-	4. Demonstration
-	5. Benchmark
-
- */
-
-/* Benchmark screenplay
-
-open base
-add n pdocuct
-show by name, by amound, by date
-delete n/5 from end
-show all
-(reorganize)
-
-*/

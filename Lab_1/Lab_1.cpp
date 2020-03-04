@@ -2,8 +2,6 @@
 
 
 int main(){
-	Initialization();
-
 	try {
 		StartMenu();
 	} catch (int e) {
