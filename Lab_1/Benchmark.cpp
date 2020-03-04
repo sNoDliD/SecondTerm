@@ -106,10 +106,10 @@ void TxtBench(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec) {
 
 	AddTxtRandom(n);
 	FindByCondition<ProductString>(IsSubName, "ab");
-	/*for (size_t i = 1; i <= n / 10; i++) 
+	for (size_t i = 1; i <= n / 10; i++) 
 		DeleteTxt(n - i);
 	for (size_t i = 1; i <= n / 10; i++) 
-		DeleteTxt(i);*/
+		DeleteTxt(i);
 	FindByCondition<ProductString>(IsMore, count);
 	FindByCondition<ProductString>(IsDied, date);
 	FindByCondition<ProductString>();
@@ -142,10 +142,10 @@ void BinBench(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec) {
 	FindByCondition<Product>(IsSubName, "ab");
 	FindByCondition<Product>(IsMore, count);
 	FindByCondition<Product>(IsDied, date);
-	/*for (size_t i = 1; i <= n / 10; i++) {
+	for (size_t i = 1; i <= n / 10; i++) {
 		DeleteBin(n - i);
 		DeleteBin(i);
-	}*/
+	}
 	FindByCondition<Product>();
 	SetLastIdBin();
 
@@ -175,10 +175,10 @@ void VectorBench(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec) {
 	FindByCondition<Product>(IsSubName, "ab");
 	FindByCondition<Product>(IsMore, count);
 	FindByCondition<Product>(IsDied, date);
-	/*for (size_t i = 1; i <= n / 10; i++) {
+	for (size_t i = 1; i <= n / 10; i++) {
 		DeleteVector(i);
 		DeleteVector(n - i);
-	}*/
+	}
 	FindByCondition<Product>();
 	sizeInBytes = ReorganizeVector() * sizeof(Product);
 

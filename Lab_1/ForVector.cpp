@@ -64,11 +64,13 @@ bool DeleteVector(size_t id) {
 
 size_t ReorganizeVector() {
     size_t now = 0;
+
     for (size_t i = 0, len = GetLastId(); i < len; i++) 
         if (g_arr[i].id != 0) {
             g_arr[i].id = now + 1;
             g_arr[now++] = g_arr[i];
         }
+
     for (size_t i = now, len = GetLastId(); i < len; i++)
         g_arr.pop_back();
     return GetLastId();

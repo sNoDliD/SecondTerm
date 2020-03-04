@@ -53,7 +53,7 @@ enum class Units : byte {
 const char* UnitsToString(int unitId);
 
 #pragma pack(push, 1)
-struct Date { // byte -> int (cheak on benchmark)
+struct Date { 
 	byte2 year : 12;
 	byte mounth : 5;
 	byte day : 6;

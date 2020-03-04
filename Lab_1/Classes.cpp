@@ -205,7 +205,7 @@ std::ostream& operator<< (std::ostream& out, const Date& date) {
 }
 
 std::istream& operator>> (std::istream& in, Date& date){
-	int data = 0;
+	byte2 data = 0;
 	in >> data;
 	date.day = data;
 	in >> data;
