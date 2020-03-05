@@ -4,7 +4,18 @@
 #pragma region Declaration
 
 int ChoiceMode();
+
 int Interactive(int listType);
+
+//int Create(int listType);
+
+int Insert(int listType);
+
+int Remove(int listType);
+
+int Get(int listType);
+
+int Set(int listType);
 
 #pragma endregion
 
@@ -12,15 +23,6 @@ int Interactive(int listType);
 #pragma region Start
 
 void StartMenu() {
-	OnVector<int> a;
-	a.Insert(1, 3);
-	a.Insert(2, 3);
-	a.Insert(3, 3);
-	a.Insert(4, 3);
-	a.Insert(5, -1);
-	cout << a.Remove(1);
-	system("pause");
-
 	vector <MenuItem>* all = new vector<MenuItem>;
 	all->push_back(MenuItem("Interactive", ChoiceMode));
 	all->push_back(MenuItem("Demonstration", nullptr));
@@ -44,15 +46,13 @@ int ChoiceMode() {
 	return (int)MenuMode::REPEATE;
 }
 
-int Interactive(int listType) {
-	SetWorkMode(Mode(listType));
-	
+int Interactive(int listType) {	
 	vector <MenuItem>* all = new vector<MenuItem>;
 	all->push_back(MenuItem("Create empty"));
-	all->push_back(MenuItem("Insert"));
-	all->push_back(MenuItem("Remove"));
-	all->push_back(MenuItem("Get"));
-	all->push_back(MenuItem("Set"));
+	all->push_back(MenuItem("Insert", Insert, listType));
+	all->push_back(MenuItem("Remove", Remove, listType));
+	all->push_back(MenuItem("Get", Get, listType));
+	all->push_back(MenuItem("Set", Set, listType));
 	
 	Menu* menu = new Menu("Interactive mode", all);
 	menu->DoMenu();
@@ -65,6 +65,31 @@ int Interactive(int listType) {
 
 #pragma region Action
 
+template <typename Tlist>
+void Create(int listType) {
+	int index = SetIndex(Mode(listType), {Mode::FIXEDSIZE, Mode::VECTOR, Mode::LINKEDLIST});
 
+
+}
+
+int Insert(int listType) {
+
+	return (int)MenuMode::REPEATE;
+}
+
+int Remove(int listType) {
+
+	return (int)MenuMode::REPEATE;
+}
+
+int Get(int listType) {
+
+	return (int)MenuMode::REPEATE;
+}
+
+int Set(int listType) {
+
+	return (int)MenuMode::REPEATE;
+}
 
 #pragma endregion

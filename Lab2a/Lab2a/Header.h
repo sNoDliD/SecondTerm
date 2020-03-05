@@ -9,15 +9,11 @@
 using std::cout;
 using std::endl;
 
-enum class Mode{
+enum class Mode {
 	FIXEDSIZE,
 	VECTOR,
 	LINKEDLIST
 };
-
-Mode WorkMode();
-
-void SetWorkMode(Mode mode);
 
 void StartMenu();
 
