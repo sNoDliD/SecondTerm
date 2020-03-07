@@ -19,3 +19,14 @@ std::string FloatToString(float str, size_t accuracy) {
 	if (result.back() == '.') result.pop_back();
 	return result;
 }
+
+
+void SleepPrint(std::string str, size_t printPause, size_t pause) {
+	Sleep(pause);
+	for (auto a : str) {
+		std::cout << a;
+		Sleep(printPause);
+	}
+	Sleep(pause);
+	std::cout << std::endl;
+}

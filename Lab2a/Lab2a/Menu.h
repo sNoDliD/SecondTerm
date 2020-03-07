@@ -37,6 +37,8 @@ void SetColor(int color, T& str, const Ttail&... tail) {
 	SetColor(color, tail...);
 }
 
+static size_t Between(size_t value, size_t left, size_t right);
+
 
 class MenuItem{
 	friend class Menu;
@@ -72,7 +74,7 @@ public:
 		string endMessage = "Press ESC to go back or exit");
 
 	int DoMenu(initializer_list<size_t> order = initializer_list<size_t>(),
-		size_t selectTime = 800, size_t switchTime = 550);
+		size_t selectTime = 800, size_t totalSwitchTime = 1000);
 };
 
 

@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <initializer_list>
+#include <Windows.h>
 
 std::string FloatToString(float str, size_t accuracy = 3);
 
@@ -51,6 +52,6 @@ int SetIndex(T element, std::initializer_list<T> list) {
 
 #pragma endregion
 
-
+void SleepPrint(std::string str, size_t printPause, size_t pause);
 
 #endif // !ADD_THIS_IN_ALL_MY_PRODUCTS

@@ -9,7 +9,8 @@
 
 using std::cout;
 using std::endl;
-typedef unsigned char byte;
+
+const size_t coutSleep = 120, coutPause = 600;
 
 enum class Mode {
 	FIXEDSIZE,
@@ -29,11 +30,13 @@ IP RandomIP();
 
 std::string to_string(IP ip);
 
-void InputStr(int& str, const char* preMessage, int leftBorder = INT32_MIN, int rightBorder = INT32_MAX);
+void InputStr(int& str, const char* preMessage = "", int leftBorder = INT32_MIN, int rightBorder = INT32_MAX);
 
-IP InputIP();
+IP InputIP(size_t choice);
 
 void StartMenu();
+
+int Benchmark();
 
 
 #endif // !All_HEADER_IN_ONE_FILE

@@ -84,14 +84,19 @@ Menu::Menu(string title, std::initializer_list <MenuItem> items, string endMessa
 	SetMenuItems(items);
 }
 
-int Menu::DoMenu(initializer_list<size_t> order, size_t selectTime, size_t switchTime) {
+int Menu::DoMenu(initializer_list<size_t> order, size_t selectTime, size_t totalSwitchTime) {
 	int currentKey = 0, ans;
+
 	while (true) {
 		if(order.size() == 0) ans = ShowMenu();
 		else {
 			if (currentKey == order.size())
 				return (int)MenuMode::EXIT;
-			ans = ShowMenu(*(order.begin() + currentKey++), selectTime, switchTime);
+			size_t choice = *(order.begin() + currentKey++);
+			
+			if (choice != 0)
+				ans = ShowMenu(choice, selectTime, Between(totalSwitchTime / choice, 200, 500));
+			else ans = ShowMenu();
 		}
 
 		bool isEmpty = menuItems.size() == 0;
@@ -110,6 +115,10 @@ int Menu::DoMenu(initializer_list<size_t> order, size_t selectTime, size_t switc
 			result = menuItems[ans - 1].IntFunc(menuItems[ans - 1].returnValue);
 		if (result != (int)MenuMode::REPEATE) return result;
 	}
+}
+
+size_t Between(size_t value, size_t left, size_t right) {
+	return max(min(value, right), left);
 }
 
 	

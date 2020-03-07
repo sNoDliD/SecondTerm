@@ -231,9 +231,9 @@ public:
 
 	T Remove(int index) {
 		if (size == 0) throw "Empty list...";
-		mod(--index, size);
+		T result = Get(index);
 
-		T result = Get(index + 1);
+		mod(--index, size--);
 
 		Node<T>* preRemove = head;
 		for (size_t i = 0; i < (size_t)index; i++)
@@ -243,7 +243,7 @@ public:
 		delete preRemove->next;
 		preRemove->next = afterRemove;
 
-		size--;
+		if (index == size) head = afterRemove;
 
 		return result;
 	}

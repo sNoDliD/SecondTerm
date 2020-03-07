@@ -3,6 +3,8 @@
 
 #pragma region Declaration
 
+static int Demonstration();
+
 static int ChoiceMode();
 
 static int Interactive(int listType);
@@ -18,6 +20,14 @@ static int Get(int listType);
 static int Set(int listType);
 
 static int View(int listType);
+
+static bool isDemo = false;
+
+static void Pause() {
+	std::cout << std::endl;
+	if (isDemo) Sleep(1500);
+	else system("pause");
+}
 
 #pragma endregion
 
@@ -36,22 +46,28 @@ static CircularList<IP> g_CircularList;
 void StartMenu() {
 	Menu menu("Choose your mode:", {
 		MenuItem("Interactive", ChoiceMode) ,
-		MenuItem("Demonstration", nullptr) ,
-		MenuItem("Benchmark", nullptr) });
+		MenuItem("Demonstration", Demonstration) ,
+		MenuItem("Benchmark", Benchmark) });
 	menu.DoMenu();
 }
 
 int ChoiceMode() {
+	initializer_list<size_t> order;
+	if (isDemo) order = { 2, 1, 3 };
+
 	Menu menu("Choose type of your list", {
 		MenuItem("Fixed size", Interactive, (int)Mode::FIXEDSIZE) ,
 		MenuItem("Base on vector", Interactive, (int)Mode::VECTOR) ,
 		MenuItem("Linked", Interactive, (int)Mode::LINKEDLIST) });
-	menu.DoMenu();
+	menu.DoMenu(order);
 
 	return (int)MenuMode::REPEATE;
 }
 
 int Interactive(int listType) {
+	initializer_list<size_t> order;
+	if (isDemo) order = { 1,2,3,3,3,4,5,6,1,2,1,3,3,3,1 };
+
 	Menu menu("Interactive mode", {
 		MenuItem("View", View, listType),
 		MenuItem("Create empty", Create, listType),
@@ -59,7 +75,15 @@ int Interactive(int listType) {
 		MenuItem("Remove", Remove, listType),
 		MenuItem("Get", Get, listType),
 		MenuItem("Set", Set, listType) });
-	menu.DoMenu();
+	menu.DoMenu(order);
+
+	return (int)MenuMode::REPEATE;
+}
+
+int Demonstration() {
+	isDemo = true;
+	ChoiceMode();
+	isDemo = false;
 
 	return (int)MenuMode::REPEATE;
 }
@@ -82,8 +106,7 @@ int View(int listType) {
 		cout << g_CircularList.ToString("\n", true);
 	}
 
-	cout << endl;
-	system("pause");
+	Pause();
 	return (int)MenuMode::REPEATE;
 }
 
@@ -91,7 +114,13 @@ int Create(int listType) {
 	
 	switch (Mode(listType)){
 	case Mode::FIXEDSIZE:
-		InputStr(listType, "Input maximum size: ", 0);
+		cout << "Input maximum list's size: ";
+		if (isDemo) {
+			listType = rand() % 100;
+			SleepPrint(to_string(listType), coutSleep, coutPause);
+		}
+		else InputStr(listType, "", 0);
+
 		g_fixedSize.CreateEmpty((size_t)listType);
 		break;
 	case Mode::VECTOR:
@@ -101,13 +130,19 @@ int Create(int listType) {
 		g_CircularList.CreateEmpty();
 	}
 
+	cout << "Empty list was created";
+	Pause();
 	return (int)MenuMode::REPEATE;
 }
 
 int Insert(int listType) {
-	IP element = InputIP();
-	int index;
-	InputStr(index, "Input index in list: ");
+	IP element = InputIP(isDemo * (rand() % 2 + 1));
+
+	int index = rand() % 20 - 10;
+	cout << "Input index in list: ";
+	if (isDemo)	SleepPrint(to_string(index), coutSleep, coutPause);
+	else InputStr(index);
+
 
 	switch (Mode(listType)) {
 	case Mode::FIXEDSIZE:
@@ -120,15 +155,19 @@ int Insert(int listType) {
 		g_CircularList.Insert(element, index);
 	}
 
-	cout << "\nSuccess\n";
-	system("pause");
+	cout << "\nSuccess";
+	Pause();
 	return (int)MenuMode::REPEATE;
 }
 
 int Remove(int listType) {
-	int index;
-	InputStr(index, "Input index in list: ");
 	IP deleted;
+
+	int index = rand() % 20 - 10;
+	cout << "Input index in list: ";
+	if (isDemo) SleepPrint(to_string(index), coutSleep, coutPause);
+	else InputStr(index);
+
 	switch (Mode(listType)) {
 	case Mode::FIXEDSIZE:
 		deleted = g_fixedSize.Remove(index);
@@ -140,15 +179,20 @@ int Remove(int listType) {
 		deleted = g_CircularList.Remove(index);
 	}
 
-	cout <<"\n"<< to_string(deleted) <<" successfully deleted\n";
-	system("pause");
+	cout <<"\n"<< to_string(deleted) <<" successfully deleted";
+
+	Pause();
 	return (int)MenuMode::REPEATE;
 }
 
 int Get(int listType) {
-	int index;
-	InputStr(index, "Input index in list: ");
 	IP select;
+
+	int index = rand() % 20 - 10;
+	cout << "Input index in list: ";
+	if (isDemo) SleepPrint(to_string(index), coutSleep, coutPause);
+	else InputStr(index);
+
 	switch (Mode(listType)) {
 	case Mode::FIXEDSIZE:
 		select = g_fixedSize.Get(index);
@@ -160,16 +204,19 @@ int Get(int listType) {
 		select = g_CircularList.Get(index);
 	}
 
-	cout << "\n" << to_string(select) << "\n";
+	cout << "\n" << to_string(select);
 
-	system("pause");
+	Pause();
 	return (int)MenuMode::REPEATE;
 }
 
 int Set(int listType) {
-	IP element = InputIP();
-	int index;
-	InputStr(index, "Input index in list: ");
+	IP element = InputIP(isDemo * (rand() % 2 + 1));
+
+	int index = rand() % 20 - 10;
+	cout << "Input index in list: ";
+	if (isDemo) SleepPrint(to_string(index), coutSleep, coutPause);
+	else InputStr(index);
 
 	switch (Mode(listType)) {
 	case Mode::FIXEDSIZE:
@@ -182,9 +229,9 @@ int Set(int listType) {
 		g_CircularList.Set(element, index);
 	}
 
-	cout << "\nSuccess\n";
-	system("pause");
+	cout << "\nSuccess";
 
+	Pause();
 	return (int)MenuMode::REPEATE;
 }
 
