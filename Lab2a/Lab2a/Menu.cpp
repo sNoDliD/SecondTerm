@@ -19,24 +19,29 @@ MenuItem::MenuItem(string title, int (*FuncOfItem)(int), int value){
 void Menu::ViewItems(int key){
 	cout << title << "\n\n";
 	int j = 1;
+	//todo: firstly draw defult
 	for (vector <MenuItem> ::iterator i = menuItems.begin(); i < menuItems.end(); i++, j++){
 		if (key == j)
 			SetColor(48, " >> ", i->nameMenuItem, '\n');
 		else
 			cout <<"    "<< i->nameMenuItem << '\n';
 	}
-	SetColor(6, "\nPress ESC to go back or exit\n");
+	SetColor(6, "\n", endMessage);
+	//todo: draw selected
 }
 
-void Menu::SetMenuItems(vector <MenuItem> items) {
+void Menu::SetMenuItems(std::initializer_list <MenuItem> items) {
 	menuItems = items;
-	for (int i = 0, n = items.size(); i < n; ++i)
+	for (int i = 0, n = items.size(); i < n; ++i) {
 		menuItems[i].index = i + 1;
+	}
 }
 
-int Menu::ShowMenu(size_t choice, size_t& selectTime, size_t& switchTime){
+int Menu::ShowMenu(const size_t& choice, const size_t& selectTime,const size_t& switchTime){
+	//todo: ViewItems() here defult selected item = 1
 	for(size_t key = 1; key <= choice; key++) {
 		system("cls");
+		//todo: ReDrawItems({key, key - 1});
 		ViewItems(key);
 		Sleep(switchTime);
 	}
@@ -73,10 +78,10 @@ int Menu::ShowMenu() {
 	return key;
 }
 
-Menu::Menu(string title, vector <MenuItem>* items){
-	this->title = title;
-	SetMenuItems(*items);
-	delete items;
+Menu::Menu(string title, std::initializer_list <MenuItem> items, string endMessage) :
+	title(title), endMessage(endMessage) {
+	//count enter count and ++ in private var(defult = 2)
+	SetMenuItems(items);
 }
 
 int Menu::DoMenu(initializer_list<size_t> order, size_t selectTime, size_t switchTime) {

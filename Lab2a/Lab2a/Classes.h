@@ -33,13 +33,15 @@ public:
 	}
 
 	//T should have method: std::string to_string(T)
-	std::string ToString(std::string delimiter = " ") {
+	std::string ToString(std::string delimiter = " ", bool numerated = false) {
 		std::string result = "";
 
-		if (size == 0) return "List is empty";
+		if (last == 0) return "List is empty";
 
-		for (size_t i = 0; i < last; i++)
+		for (size_t i = 0; i < last; i++) {
+			if (numerated) result += to_string(i) + ": ";
 			result += to_string(arr[i]) + delimiter;
+		}
 
 		for (size_t i = delimiter.size(); i > 0; i--)
 			result.pop_back();
@@ -96,13 +98,16 @@ class OnVector {
 public:
 
 	//T should have method: std::string to_string(T)
-	std::string ToString(std::string delimiter = " ") {
+	std::string ToString(std::string delimiter = " ", bool numerated = false) {
 		std::string result = "";
 
 		if (arr.size() == 0) return "List is empty";
 
-		for (auto now : arr)
+		size_t numerator = 0;
+		for (auto now : arr) {
+			if (numerated) result += to_string(numerator++) + ": ";
 			result += to_string(now) + delimiter;
+		}
 
 		for (size_t i = delimiter.size(); i > 0; i--)
 			result.pop_back();
@@ -114,7 +119,7 @@ public:
 		arr = vector<T>();
 	}
 
-	void CreateEmpty(size_t size = 0) {
+	void CreateEmpty() {
 		arr = vector<T>();
 	}
 
@@ -179,13 +184,15 @@ public:
 	}
 
 	//T should have method: std::string to_string(T)
-	std::string ToString(std::string delimiter = " ") {
+	std::string ToString(std::string delimiter = " ", bool numereted = false) {
 		std::string result = "";
 		Node<T>* now = head;
 
 		if (size == 0) return "List is empty";
 
+		size_t numerator = 0;
 		do {
+			if (numereted) result += to_string(numerator++) + ": ";
 			result += to_string(now->value) + delimiter;
 			now = now->next;
 		} while (now != head);
@@ -196,7 +203,7 @@ public:
 		return result;
 	}
 
-	void CreateEmpty(size_t size = 0) {
+	void CreateEmpty() {
 		Free();
 		this->size = 0;
 		head = nullptr;

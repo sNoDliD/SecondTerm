@@ -56,18 +56,20 @@ public:
 class Menu : MenuItem{
 private:
 	string title;
+	string endMessage;
 	vector<MenuItem> menuItems;
 
 	void ViewItems(int key);
 
-	void SetMenuItems(vector <MenuItem> items);
+	void SetMenuItems(initializer_list <MenuItem> items);
 
 	int ShowMenu();
 
-	int ShowMenu(size_t choice, size_t& selectTime, size_t& switchTime);
+	int ShowMenu(const size_t& choice, const size_t& selectTime, const size_t& switchTime);
 
 public:
-	Menu(string title = "#", vector <MenuItem>* items = new vector<MenuItem>);
+	Menu(string title = "#", initializer_list <MenuItem> items = initializer_list<MenuItem>(),
+		string endMessage = "Press ESC to go back or exit");
 
 	int DoMenu(initializer_list<size_t> order = initializer_list<size_t>(),
 		size_t selectTime = 800, size_t switchTime = 550);
