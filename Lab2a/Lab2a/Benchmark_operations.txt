@@ -1,0 +1,17 @@
+Operations:
+
+Average count of INSERT per seconds:
+	Fixed size list - 15.684
+	List based on vector - 41.891
+	Circular list - 3.922
+
+Average count of SET-GET per seconds:
+	Fixed size list - 1025.418
+	List based on vector - 866.102
+	Circular list - 2.368
+
+Average count of REMOVE per seconds:
+	Fixed size list - 16.043
+	List based on vector - 109.5
+	Circular list - 5.219
+

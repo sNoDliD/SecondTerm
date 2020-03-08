@@ -3,13 +3,18 @@
 #include <fstream>
 
 static string AddChar(size_t value, size_t minCount = 10, char returnValue = ' ');
-
 static string AddChar(string value, size_t minCount = 10, char returnValue = ' ');
 
 
 static void BenchFixedSize(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec);
 static void BenchOnVector(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec);
 static void BenchCircular(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec);
+
+void BenchOperations();
+
+static void Insert(std::ostream& file);
+static void SetGet(std::ostream& file);
+static void Remove(std::ostream& file);
 
 
 static bool ByScreenPlay(void(*Func)(const size_t&, size_t&, size_t&),
@@ -49,9 +54,12 @@ static bool ByScreenPlay(void(*Func)(const size_t&, size_t&, size_t&),
 }
 
 int Benchmark() {
+
 	ByScreenPlay(BenchFixedSize, "Fixed size list", "Benchmark.txt", true);
 	ByScreenPlay(BenchOnVector, "List based on vector", "Benchmark.txt");
 	ByScreenPlay(BenchCircular, "Linked list", "Benchmark.txt");
+
+	BenchOperations();
 	
 	cout << "\nBenchmark ends" << endl;
 	system("pause");
@@ -137,4 +145,175 @@ void BenchCircular(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec) 
 	timeInMilisec = ((double)end - start) * 1000 / CLOCKS_PER_SEC;
 	sizeInBytes = sizeof(arr) + (sizeof(IP) + sizeof(Node<IP>*)) * n / 5 * 4;
 
+}
+
+
+void BenchOperations() {
+
+	std::fstream file;
+	file.open("Benchmark_operations.txt", std::fstream::out);
+	if (!file.is_open()) throw - 1;
+
+	file << "Operations:\n\n";
+	SetColor(6, "\tOperations start benchmark\n");
+
+	SetColor(6, "\tINSERT\n");
+	Insert(file);
+	SetColor(6, "\tSET/GET\n");
+	SetGet(file);
+	SetColor(6, "\tREMOVE\n");
+	Remove(file);
+
+	file.close();
+}
+
+void Insert(std::ostream& file) {
+	clock_t start, end;
+	int index = 0;
+	file << "Average count of INSERT per seconds:\n";
+
+	while (index < 3) {
+		if (index == 0) file << "\tFixed size list - ";
+		if (index == 1) file << "\tList based on vector - ";
+		else if (index == 2) file << "\tCircular list - ";
+		size_t n = 600, time;
+		size_t nSum = 0, timeSum = 0;
+
+		while (true) {
+			FixedSize<IP> fixedSize(n);
+			OnVector<IP> onVector;
+			CircularList<IP> circularList;
+			start = clock();
+
+			if (index == 0)
+				for (size_t i = 0; i < n; i++)
+					fixedSize.Insert(RandomIP(), RandomInt());
+			else if (index == 1)
+				for (size_t i = 0; i < n; i++)
+					onVector.Insert(RandomIP(), RandomInt());
+			else if (index == 2)
+				for (size_t i = 0; i < n; i++)
+					circularList.Insert(RandomIP(), RandomInt());
+
+			end = clock();
+			time = ((double)end - start) * 1000 / CLOCKS_PER_SEC;
+			cout << AddChar(n) << AddChar(time, 7) << endl;
+			timeSum += time;
+			nSum += n;
+
+			if (time > 1e4) break;
+			n *= 2;
+		}
+		file << FloatToString((float)nSum / timeSum) << endl;
+		index++;
+	}
+	file << endl;
+}
+
+void SetGet(std::ostream& file) {
+	clock_t start, end;
+	int index = 0;
+	file << "Average count of SET-GET per seconds:\n";
+
+	while (index < 3) {
+		if (index == 0) file << "\tFixed size list - ";
+		if (index == 1) file << "\tList based on vector - ";
+		else if (index == 2) file << "\tCircular list - ";
+		size_t n = 600, time;
+		size_t nSum = 0, timeSum = 0;
+
+		while (true) {
+			FixedSize<IP> fixedSize(n);
+			OnVector<IP> onVector;
+			CircularList<IP> circularList;
+
+			if (index == 0)
+				for (size_t i = 0; i < n; i++)
+					fixedSize.Insert(RandomIP(), RandomInt());
+			else if (index == 1)
+				for (size_t i = 0; i < n; i++)
+					onVector.Insert(RandomIP(), RandomInt());
+			else if (index == 2)
+				for (size_t i = 0; i < n; i++)
+					circularList.Insert(RandomIP(), RandomInt());
+
+			start = clock();
+
+			if (index == 0)
+				for (size_t i = 0; i < n; i++)
+					fixedSize.Set(fixedSize.Get(RandomInt()), RandomInt());
+			else if (index == 1)
+				for (size_t i = 0; i < n; i++)
+					onVector.Set(onVector.Get(RandomInt()), RandomInt());
+			else if (index == 2)
+				for (size_t i = 0; i < n; i++)
+					circularList.Set(circularList.Get(RandomInt()), RandomInt());
+
+			end = clock();
+			time = ((double)end - start) * 1000 / CLOCKS_PER_SEC;
+			cout << AddChar(n) << AddChar(time, 7) << endl;
+			timeSum += time;
+			nSum += n;
+
+			if (n > 1e5 || time > 1e4) break;
+			n *= 2;
+		}
+		file << FloatToString((float)nSum / timeSum) << endl;
+		index++;
+	}
+	file << endl;
+}
+
+void Remove(std::ostream& file) {
+	clock_t start, end;
+	int index = 0;
+	file << "Average count of REMOVE per seconds:\n";
+
+	while (index < 3) {
+		if (index == 0) file << "\tFixed size list - ";
+		if (index == 1) file << "\tList based on vector - ";
+		else if (index == 2) file << "\tCircular list - ";
+		size_t n = 600, time;
+		size_t nSum = 0, timeSum = 0;
+
+		while (true) {
+			FixedSize<IP> fixedSize(n);
+			OnVector<IP> onVector;
+			CircularList<IP> circularList;
+
+			if (index == 0)
+				for (size_t i = 0; i < n; i++)
+					fixedSize.Insert(RandomIP(), RandomInt());
+			else if (index == 1)
+				for (size_t i = 0; i < n; i++)
+					onVector.Insert(RandomIP(), RandomInt());
+			else if (index == 2)
+				for (size_t i = 0; i < n; i++)
+					circularList.Insert(RandomIP(), RandomInt());
+
+			start = clock();
+
+			if (index == 0)
+				for (size_t i = 0; i < n; i++)
+					fixedSize.Remove(RandomInt());
+			else if (index == 1)
+				for (size_t i = 0; i < n; i++)
+					onVector.Remove(RandomInt());
+			else if (index == 2)
+				for (size_t i = 0; i < n; i++)
+					circularList.Remove(RandomInt());
+
+			end = clock();
+			time = ((double)end - start) * 1000 / CLOCKS_PER_SEC;
+			cout << AddChar(n) << AddChar(time, 7) << endl;
+			timeSum += time;
+			nSum += n;
+
+			if (n > 1e5 || time > 1e4) break;
+			n *= 2;
+		}
+		file << FloatToString((float)nSum / timeSum) << endl;
+		index++;
+	}
+	file << endl;
 }

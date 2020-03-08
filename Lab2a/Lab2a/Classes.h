@@ -241,6 +241,10 @@ public:
 
 		Node<T>* afterRemove = preRemove->next->next;
 		delete preRemove->next;
+		if (size == 0) {
+			head = nullptr;
+			return result;
+		}
 		preRemove->next = afterRemove;
 
 		if (index == size) head = afterRemove;
