@@ -30,3 +30,9 @@ void SleepPrint(std::string str, size_t printPause, size_t pause) {
 	Sleep(pause);
 	std::cout << std::endl;
 }
+
+int RandomInt(){
+	int result = (rand() << 1) + rand() % 2;
+	result += ((rand() << 1) + rand() % 2) << 16;
+	return result;
+}

@@ -273,12 +273,18 @@ public:
 	void Free() {
 		if (!head) return;
 		Node<T>* current = head;
+
+		Node<T>* debugHead = head;
+		size_t debugSize = size;
+
 		Node<T>* afterCurrent = current->next;
-		do {
+		while (true){
 			delete current;
 			current = afterCurrent;
+			if (--size == 0) break;
 			afterCurrent = current->next;
-		} while (--size > 0);
+		}
+
 		head = nullptr;
 	}
 

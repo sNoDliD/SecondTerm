@@ -2,9 +2,7 @@
 
 
 IP RandomIP() {
-	unsigned result = (rand() << 1) + rand() % 2;
-	result += ((rand() << 1) + rand() % 2) << 16;
-	return IP(result);
+	return IP(RandomInt());
 }
 
 std::string to_string(IP ip) {

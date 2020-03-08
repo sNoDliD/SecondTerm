@@ -54,4 +54,6 @@ int SetIndex(T element, std::initializer_list<T> list) {
 
 void SleepPrint(std::string str, size_t printPause, size_t pause);
 
+int RandomInt();
+
 #endif // !ADD_THIS_IN_ALL_MY_PRODUCTS
