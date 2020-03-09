@@ -8,10 +8,6 @@ bool IsDemo() {
 	return isDemo;
 }
 
-int Repete() {
-	return (int)MenuMode::REPEATE;
-}
-
 void StartMenu() {
 	Menu menu("Choose your mode:", {
 		MenuItem("Interactive", Interactive),
@@ -21,12 +17,12 @@ void StartMenu() {
 
 int Interactive() {
 	initializer_list<size_t> order;
-	if (IsDemo()) order = { 2 };
+	if (IsDemo()) order = { 3, 1, 2 };
 
 	Menu menu("Choose task:", {
 		MenuItem("7", Task7),
 		MenuItem("15", Task15),
-		MenuItem("25", Repete), });
+		MenuItem("25", Task25), });
 	menu.DoMenu(order);
 
 	return (int)MenuMode::REPEATE;

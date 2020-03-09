@@ -59,7 +59,7 @@ int RandomInt();
 void InputStr(int& str, const char* preMessage, int leftBorder = INT32_MIN, int righrBorder = INT32_MAX);
 void InputStr(float& str, const char* preMessage, float leftBorder, float rightBorder);
 
-std::string AddChar(size_t value, size_t minCount = 10, char returnValue = ' ');
+std::string AddChar(int value, size_t minCount = 10, char returnValue = ' ');
 std::string AddChar(std::string value, size_t minCount = 10, char returnValue = ' ');
 
 #endif // !ADD_THIS_IN_ALL_MY_PRODUCTS

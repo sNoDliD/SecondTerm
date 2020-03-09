@@ -121,13 +121,13 @@ public:
 		head = nullptr;
 	}
 
-	uint64_t Find(size_t element, float p_follow) {
+	size_t Find(size_t element, float p_follow) {
 		if (size == 0 || element > size)  return 0;
 
 		if (p_follow < 0 || p_follow >= 1.0f)
 			p_follow = (float)rand() / (RAND_MAX + 1);
 
-		uint64_t result = 0;
+		size_t result = 0;
 
 		Node* current = head;
 		for (size_t i = rand() % size; i > 0; i--)
@@ -145,13 +145,13 @@ public:
 		return result;
 	}
 
-	uint64_t All(float p_follow) {
+	size_t All(float p_follow) {
 		if (size == 0) return 0;
 
 		if (p_follow < 0 || p_follow >= 1.0f)
 			p_follow = (float)rand() / (RAND_MAX + 1);
 
-		uint64_t result = 0;
+		size_t result = 0;
 
 		size_t lastFind = size;
 		bool status = head->isVisited;
@@ -220,7 +220,7 @@ int All() {
 	}
 	else {
 		InputStr(p_follow, "Enter probability to pass on shortcut. In interval [0,1]: ", 0.0f, 1.0f);
-		InputStr(n, "Enter the number of repetitions: ", 1, 1e3);
+		InputStr(n, "Enter the number of repetitions: ", 1, (int)1e3);
 	}
 	size_t min, max, total;
 	min = max = total = g_list.All(p_follow);
@@ -252,7 +252,7 @@ int Find() {
 	else {
 		InputStr(element, "Enter element for search: ", 1);
 		InputStr(p_follow, "Enter probability to pass on shortcut. In interval [0,1]: ", 0.0f, 1.0f);
-		InputStr(n, "Enter the number of repetitions: ", 1, 1e3);
+		InputStr(n, "Enter the number of repetitions: ", 1, (int)1e3);
 	}
 	size_t min, max, total;
 	min = max = total = g_list.Find(element ,p_follow);

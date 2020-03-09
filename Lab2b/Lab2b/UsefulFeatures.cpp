@@ -65,18 +65,12 @@ void InputStr(float& str, const char* preMessage, float leftBorder, float rightB
 }
 
 
-std::string AddChar(size_t value, size_t minCount, char returnValue) {
-	std::string result = "";
-	for (size_t i = 0; i < minCount - 1; ++i)
-		if ((int)value < pow(10, (i + 1)))
-			result += returnValue;
-
-	result += to_string((int)value);
-	return result;
+std::string AddChar(int value, size_t minCount, char returnValue) {
+	return AddChar(to_string(value), minCount, returnValue);
 }
 
 std::string AddChar(std::string value, size_t minCount, char returnValue) {
-	for (size_t i = minCount - value.size(); i > 0; i--)
+	for (int i = minCount - value.size(); i > 0; i--)
 		value = returnValue + value;
 
 	return value;
