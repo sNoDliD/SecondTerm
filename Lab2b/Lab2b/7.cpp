@@ -141,7 +141,7 @@ int Add() {
 	return Show();
 }
 
-void CreateNewList(int result) {
+static void CreateNewList(int result) {
 	OnVector<int> newList;
 
 	if (result == 1) {

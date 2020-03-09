@@ -21,11 +21,11 @@ void StartMenu() {
 
 int Interactive() {
 	initializer_list<size_t> order;
-	if (IsDemo()) order = { 1 };
+	if (IsDemo()) order = { 2 };
 
 	Menu menu("Choose task:", {
 		MenuItem("7", Task7),
-		MenuItem("15", Repete),
+		MenuItem("15", Task15),
 		MenuItem("25", Repete), });
 	menu.DoMenu(order);
 

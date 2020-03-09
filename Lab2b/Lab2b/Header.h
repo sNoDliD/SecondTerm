@@ -10,9 +10,11 @@ bool IsDemo();
 
 void StartMenu();
 
-const size_t pauseTime = 1400;
+const size_t pauseTime = 1600;
 
 int Task7();
+
+int Task15();
 
 
 #endif // !MAIN_HEADER_WITH_ALL_FUNCTIONS
