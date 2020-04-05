@@ -1,6 +1,8 @@
-﻿#include <iostream>
+﻿#include "Header.h"
 
-int main()
+int main() 
 {
-    std::cout << "Hello World!\n";
+	srand((unsigned)time(0));
+
+	CallWithoutBack(StartMenu, "Programm successfuly ends");
 }
