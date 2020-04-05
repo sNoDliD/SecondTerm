@@ -38,6 +38,21 @@ int RandomInt(){
 	return result;
 }
 
+
+int Random(int start, int end) {
+	int circle = (end - start + 1);
+
+	if (circle < 1)
+		exit(0);
+	
+	int result = RandomInt() % circle;
+	if (result < 0)
+		result += circle;
+
+	return result + start;
+}
+
+
 void InputStr(int& str, const char* preMessage, int leftBorder, int rightBorder) {
 	std::cout << preMessage;
 	std::cin >> str;

@@ -55,6 +55,7 @@ int SetIndex(T element, std::initializer_list<T> list) {
 void SleepPrint(std::string str, const char* preMassege, size_t printPause = 160, size_t pause = 600);
 
 int RandomInt();
+int Random(int start, int end);
 
 void InputStr(int& str, const char* preMessage, int leftBorder = INT32_MIN, int righrBorder = INT32_MAX);
 void InputStr(float& str, const char* preMessage, float leftBorder, float rightBorder);
