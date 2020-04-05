@@ -17,7 +17,9 @@ void StartMenu() {
 int Demonstration(){
     auto Func = { BubbleSort, QuickSort, MergeSort, CombinedSorting, CppSort};
     auto messages = { "Bubble sort","Quick sort", "Merge sort", "Combined sorting", "Librari sort" };
-    size_t size = 5;
+    int size;
+    InputStr(size, "Enter size of random array: ", 1, 15);
+
     tm* arr = new tm[size];
     tm* copy = new tm[size];
     for (size_t i = 0; i < size; i++)

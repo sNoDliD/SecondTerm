@@ -1,0 +1,44 @@
+Random array:
+ N =         29:
+1.     2 msec
+2.     1 msec
+3.     1 msec
+4.     0 msec
+5.     1 msec
+
+
+
+ N =        364:
+1.   202 msec
+2.    10 msec
+3.     6 msec
+4.     9 msec
+5.    14 msec
+
+
+
+ N =       3730:
+1. 13788 msec
+2.   135 msec
+3.    84 msec
+4.   119 msec
+5.   197 msec
+
+
+
+ N =      33670:
+2.  1604 msec
+3.   923 msec
+4.  1484 msec
+5.  2342 msec
+
+
+
+ N =     336753:
+2. 20274 msec
+3. 11872 msec
+4. 19031 msec
+5. 28463 msec
+
+
+
