@@ -1,0 +1,60 @@
+ N =         29:
+5. 1 msec
+10. 1 msec
+15. 0 msec
+20. 1 msec
+25. 0 msec
+30. 0 msec
+35. 1 msec
+40. 0 msec
+45. 0 msec
+
+
+ N =        282:
+5. 13 msec
+10. 14 msec
+15. 9 msec
+20. 8 msec
+25. 10 msec
+30. 7 msec
+35. 7 msec
+40. 6 msec
+45. 9 msec
+
+
+ N =       2313:
+5. 91 msec
+10. 67 msec
+15. 65 msec
+20. 61 msec
+25. 69 msec
+30. 67 msec
+35. 61 msec
+40. 81 msec
+45. 68 msec
+
+
+ N =      23164:
+5. 1080 msec
+10. 936 msec
+15. 925 msec
+20. 910 msec
+25. 929 msec
+30. 927 msec
+35. 930 msec
+40. 939 msec
+45. 947 msec
+
+
+ N =     208492:
+5. 10590 msec
+10. 10257 msec
+15. 10185 msec
+20. 10145 msec
+25. 10099 msec
+30. 10466 msec
+35. 10150 msec
+40. 10271 msec
+45. 10216 msec
+
+

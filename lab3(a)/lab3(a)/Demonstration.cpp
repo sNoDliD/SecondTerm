@@ -137,7 +137,7 @@ void CombinedSortingStep(tm* arr, size_t left, size_t right, size_t startSimple,
 }
 
 void CombinedSorting(tm* arr, size_t size, bool stepPrint) {
-    CombinedSortingStep(arr, 0, size - 1, 3, stepPrint);
+    CombinedSortingStep(arr, 0, size - 1, 35, stepPrint);
     StepPrint(arr, size, stepPrint);
 }
 
@@ -181,12 +181,19 @@ void MergeSort(tm* arr, size_t size, bool stepPrint) {
 
 
 void BubbleSort(tm* arr, size_t size, bool stepPrint) {
-    for (size_t j = size - 1; j > 0; j--)
+    for (size_t j = size - 1; j > 0; j--) {
+        bool isSorted = true;
+
         for (size_t i = 0; i < j; i++)
             if (arr[j] < arr[i]) {
+                isSorted = false;
                 swap(arr[i], arr[j]);
                 StepPrint(arr, size, stepPrint);
             }
+
+        if (isSorted)
+            break;
+    }
 }
 
 void StepPrint(tm* arr, size_t size, bool active) {

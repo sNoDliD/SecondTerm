@@ -1,44 +1,127 @@
 Random array:
- N =         29:
-1.     2 msec
+ N =         35:
+1.     0 msec
 2.     1 msec
-3.     1 msec
+3.     0 msec
 4.     0 msec
 5.     1 msec
 
 
 
- N =        364:
-1.   202 msec
-2.    10 msec
-3.     6 msec
-4.     9 msec
-5.    14 msec
+ N =        292:
+1.    17 msec
+2.     7 msec
+3.     5 msec
+4.     6 msec
+5.    12 msec
 
 
 
- N =       3730:
-1. 13788 msec
-2.   135 msec
-3.    84 msec
-4.   119 msec
-5.   197 msec
+ N =       2985:
+1.   358 msec
+2.   104 msec
+3.    61 msec
+4.    84 msec
+5.   160 msec
 
 
 
- N =      33670:
-2.  1604 msec
-3.   923 msec
-4.  1484 msec
-5.  2342 msec
+ N =      29853:
+1.  6089 msec
+2.  1358 msec
+3.   810 msec
+4.  1173 msec
+5.  2004 msec
 
 
 
- N =     336753:
-2. 20274 msec
-3. 11872 msec
-4. 19031 msec
-5. 28463 msec
+ N =     268732:
+2. 14951 msec
+3.  9101 msec
+4. 13354 msec
+5. 22107 msec
+
+
+
+Best case:
+ N =         32:
+1.     0 msec
+2.     1 msec
+3.     1 msec
+4.     0 msec
+5.     0 msec
+
+
+
+ N =        301:
+1.     1 msec
+2.    83 msec
+3.     2 msec
+4.    82 msec
+5.     6 msec
+
+
+
+ N =       2416:
+1.     5 msec
+2.  5514 msec
+3.    26 msec
+4.  5546 msec
+5.    72 msec
+
+
+
+ N =      24166:
+1.    43 msec
+3.   335 msec
+5.  1023 msec
+
+
+
+ N =     217582:
+1.   402 msec
+3.  3718 msec
+5. 11742 msec
+
+
+
+Worst case:
+ N =         33:
+1.     0 msec
+2.     2 msec
+3.     0 msec
+4.     1 msec
+5.     0 msec
+
+
+
+ N =        379:
+1.   100 msec
+2.   149 msec
+3.     4 msec
+4.   138 msec
+5.    11 msec
+
+
+
+ N =       3797:
+1. 10083 msec
+2. 13487 msec
+3.    47 msec
+4. 13500 msec
+5.   123 msec
+
+
+
+ N =      38043:
+3.   575 msec
+5.  1721 msec
+
+
+
+ N =     380468:
+3.  7081 msec
+5. 23058 msec
 
 
 
