@@ -48,7 +48,7 @@ int Benchmark() {
 	if (!file.is_open()) throw - 1;
 
 	Store* temp = new Store();
-	temp->maxProductCount = 1e9;
+	temp->maxProductCount = (size_t)1e9;
 	remove("temp.bin");
 	CreatePathStore("temp.bin");
 	AppendStore(temp);
@@ -94,7 +94,7 @@ int Benchmark() {
 }
 
 void TxtBench(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec) {
-	clock_t start, end;
+	clock_t start;
 	remove("DataBases/benchmark.txt");
 	CreatePathTxt("benchmark");
 
@@ -114,7 +114,7 @@ void TxtBench(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec) {
 	FindByCondition<ProductString>(IsDied, date);
 	FindByCondition<ProductString>();
 
-	end = clock();
+	timeInMilisec = clock() - start;
 
 	FILE* file;
 	fopen_s(&file, "DataBases/benchmark.txt", "rb");
@@ -123,12 +123,11 @@ void TxtBench(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec) {
 	sizeInBytes = ftell(file);
 	fclose(file);
 
-	timeInMilisec = ((double)end - start) * 1000 / CLOCKS_PER_SEC;
 	remove("DataBases/benchmark.txt");
 }
 
 void BinBench(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec) {
-	clock_t start, end;
+	clock_t start;
 	remove("DataBases/benchmark.bin");
 	CreatePathBin("benchmark");
 
@@ -149,7 +148,7 @@ void BinBench(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec) {
 	FindByCondition<Product>();
 	SetLastIdBin();
 
-	end = clock();
+	timeInMilisec = clock() - start;
 
 	FILE* file;
 	fopen_s(&file, "DataBases/benchmark.bin", "rb");
@@ -158,12 +157,11 @@ void BinBench(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec) {
 	sizeInBytes = ftell(file);
 	fclose(file);
 
-	timeInMilisec = ((double)end - start) * 1000 / CLOCKS_PER_SEC;
 	remove("DataBases/benchmark.bin");
 }
 
 void VectorBench(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec) {
-	clock_t start, end;
+	clock_t start;
 	FreeVector();
 	float count = 900;
 	Date date;
@@ -182,10 +180,9 @@ void VectorBench(const size_t& n, size_t& sizeInBytes, size_t& timeInMilisec) {
 	FindByCondition<Product>();
 	sizeInBytes = ReorganizeVector() * sizeof(Product);
 
-	end = clock();
+	timeInMilisec = clock() - start;
 
 	FreeVector();
-	timeInMilisec = ((double)end - start) * 1000 / CLOCKS_PER_SEC;
 }
 
 string AddChar(size_t value, size_t minCount, char returnValue) {

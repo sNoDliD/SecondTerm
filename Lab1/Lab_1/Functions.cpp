@@ -188,15 +188,13 @@ string FloatToString(float str, size_t accuracy) {
 }
 
 bool SetValue(const char* preMessage, Units& value){
-	vector <MenuItem>* all = new vector<MenuItem>;
-	all->push_back(MenuItem("Bag", nullptr, (int)Units::BAG));
-	all->push_back(MenuItem("Kilogramms", nullptr, (int)Units::KILOGRAMMS));
-	all->push_back(MenuItem("Liters", nullptr, (int)Units::LITERS));
-	all->push_back(MenuItem("Piece", nullptr, (int)Units::PIECE));
-
-	Menu* menu = new Menu(preMessage, all);
-	int unitId = menu->DoMenu();
-	delete menu;
+	Menu menu(preMessage, {
+		MenuItem("Bag", nullptr, (int)Units::BAG),
+		MenuItem("Kilogramms", nullptr, (int)Units::KILOGRAMMS),
+		MenuItem("Liters", nullptr, (int)Units::LITERS),
+		MenuItem("Piece", nullptr, (int)Units::PIECE)
+		});
+	int unitId = menu.DoMenu();
 
 	if (unitId == (int)MenuMode::EXIT) return false;
 	value = Units(unitId);

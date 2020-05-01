@@ -31,29 +31,24 @@ static int Modify();
 #pragma region Start
 
 int StartMenu() {
-	vector <MenuItem>* all = new vector<MenuItem>;
-	all->push_back(MenuItem("Interactive", ChoiceMode));
-	all->push_back(MenuItem("Demonstration", Demonstration));
-	all->push_back(MenuItem("Benchmark", Benchmark));
-
-	Menu* menu = new Menu("Choose your mode:", all);
-	menu->DoMenu();
-	delete menu;
+	Menu menu("Choose your mode:", {
+		MenuItem("Interactive", ChoiceMode),
+		MenuItem("Demonstration", Demonstration),
+		MenuItem("Benchmark", Benchmark) }
+	);
+	menu.DoMenu();
 
 	return (int)MenuMode::EXIT;
 }
 
 int ChoiceMode() {
 	Initialization();
-
-	vector<MenuItem>* all = new vector<MenuItem>;
-	all->push_back(MenuItem("Vector", Interactive, (int)Mode::VECTOR));
-	all->push_back(MenuItem("Text", Interactive, (int)Mode::TXT));
-	all->push_back(MenuItem("Binary", Interactive, (int)Mode::BIN));
-
-	Menu* menu = new Menu("Choose your read/write mode", all);
-	menu->DoMenu();
-	delete menu;
+	Menu menu("Choose your read/write mode", {
+		MenuItem("Vector", Interactive, (int)Mode::VECTOR),
+		MenuItem("Text", Interactive, (int)Mode::TXT),
+		MenuItem("Binary", Interactive, (int)Mode::BIN)
+	});
+	menu.DoMenu();
 
 	return (int)MenuMode::REPEATE;
 }
@@ -62,16 +57,14 @@ int Interactive(int mode) {
 	SetWorkMode(Mode(mode));
 	if (!ShopMenuCreate()) return (int)MenuMode::REPEATE;
 
-	vector <MenuItem>* all = new vector<MenuItem>;
-	all->push_back(MenuItem("Add", Add));
-	all->push_back(MenuItem("Show all", ShowAll));
-	all->push_back(MenuItem("Search", Search));
-	all->push_back(MenuItem("Modify", Modify));
-	all->push_back(MenuItem("Delete", Delete));
-
-	Menu* menu = new Menu("Interactive mode", all);
-	menu->DoMenu();
-	delete menu;
+	Menu menu("Interactive mode", {
+		MenuItem("Add", Add),
+		MenuItem("Show all", ShowAll),
+		MenuItem("Search", Search),
+		MenuItem("Modify", Modify),
+		MenuItem("Delete", Delete)
+	});
+	menu.DoMenu();
 
 	return (int)MenuMode::REPEATE;
 }
@@ -108,15 +101,14 @@ bool AllProductCorrect(Date& date) {
 }
 
 bool ShopMenuCreate() {
-	vector <MenuItem>* all = new vector<MenuItem>;
-	all->push_back(MenuItem("Find shop", ShopFind));
-	all->push_back(MenuItem("Choose shop", ShopChoice));
-	all->push_back(MenuItem("Create new", ShopCreate));
-	all->push_back(MenuItem("Delete all", DeleteAllShop));
+	Menu menu("Choose or create shop:", {
+		MenuItem("Find shop", ShopFind),
+		MenuItem("Choose shop", ShopChoice),
+		MenuItem("Create new", ShopCreate),
+		MenuItem("Delete all", DeleteAllShop)
+		});
+	int shopId = menu.DoMenu();
 
-	Menu* menu = new Menu("Choose or create shop:", all);
-	int shopId = menu->DoMenu();
-	delete menu;
 	if (shopId == (int)MenuMode::EXIT)
 		return false;
 
@@ -140,20 +132,20 @@ int ShopFind() {
 		Date date;
 		cout << "Enter min date of creation: ";
 		InputStr(date, true);
-		vector <MenuItem>* all = new vector<MenuItem>;
+		vector <MenuItem> all;
 		size_t i = 0;
 
 		while (true) {
 			Store* store = TakeStore(i++);
 			if (store == nullptr) break;
 			if (SubString(store->name, name) && AllProductCorrect(date))
-				all->push_back(MenuItem(store->name, nullptr, store->id));
+				all.push_back(MenuItem(store->name, nullptr, store->id));
 			delete store;
 		}
-		if (all->size() != 0) {
-			Menu* menu = new Menu("Choose your shop:", all);
-			int result = menu->DoMenu();
-			delete menu;
+		if (all.size() != 0) {
+			Menu menu("Choose your shop:", all);
+			int result = menu.DoMenu();
+
 			if (result == (int)MenuMode::EXIT)
 				return (int)MenuMode::REPEATE;
 			return result;
@@ -166,25 +158,26 @@ int ShopFind() {
 }
 
 int ShopChoice() {
-	vector <MenuItem>* all = new vector<MenuItem>;
+	vector <MenuItem> all;
 	size_t i = 0;
 	while (true) {
 		Store* a = TakeStore(i++);
 		if (a == nullptr) break;
-		all->push_back(MenuItem(a->name, nullptr, a->id));
+		all.push_back(MenuItem(a->name, nullptr, a->id));
 		delete a;
 	}
 
-	if (all->size() == 0) {
+	if (all.size() == 0) {
 		cout << "Don't find any shops. Create new...\n\n";
 		system("pause");
-		delete all;
+
 		return ShopCreate();
 	}
 	else {
-		Menu* menu = new Menu("Choose your shop:", all);
-		int result = menu->DoMenu();
-		delete menu;
+
+		Menu menu("Choose your shop:", all);
+		int result = menu.DoMenu();
+
 		if (result == (int)MenuMode::EXIT)
 			return (int)MenuMode::REPEATE;
 		return result;
@@ -192,13 +185,11 @@ int ShopChoice() {
 }
 
 int ShopCreate() {
-	vector <MenuItem>* all = new vector<MenuItem>;
-	all->push_back(MenuItem("Random", nullptr, 1));
-	all->push_back(MenuItem("Yourself", nullptr, 2));
-
-	Menu* menu = new Menu("Fill type:", all);
-	int type = menu->DoMenu();
-	delete menu;
+	Menu menu("Fill type:", {
+		MenuItem("Random", nullptr, 1),
+		MenuItem("Yourself", nullptr, 2)
+		});
+	int type = menu.DoMenu();
 
 	if (type == (int)MenuMode::EXIT)
 		return (int)MenuMode::REPEATE;
@@ -300,13 +291,11 @@ bool AddSelf() {
 }
 
 int Add() {
-	vector <MenuItem>* all = new vector<MenuItem>;
-	all->push_back(MenuItem("Random", nullptr, 1));
-	all->push_back(MenuItem("Yourself", nullptr, 2));
-
-	Menu* menu = new Menu("Fill type:", all);
-	int type = menu->DoMenu();
-	delete menu;
+	Menu menu("Fill type:", {
+		MenuItem("Random", nullptr, 1),
+		MenuItem("Yourself", nullptr, 2)
+		});
+	int type = menu.DoMenu();
 
 	if (type == (int)MenuMode::EXIT)
 		return (int)MenuMode::REPEATE;
@@ -383,14 +372,12 @@ size_t SearchDate() {
 }
 
 int Search() {
-	vector <MenuItem>* all = new vector<MenuItem>;
-	all->push_back(MenuItem("By name", nullptr, 1));
-	all->push_back(MenuItem("By amount", nullptr, 2));
-	all->push_back(MenuItem("By date", nullptr, 3));
-
-	Menu* menu = new Menu("Search type:", all);
-	int type = menu->DoMenu();
-	delete menu;
+	Menu menu("Search type:", {
+		MenuItem("By name", nullptr, 1),
+		MenuItem("By amount", nullptr, 2),
+		MenuItem("By date", nullptr, 3)
+		});
+	int type = menu.DoMenu();
 
 	if (type == (int)MenuMode::EXIT) 
 		return (int)MenuMode::REPEATE;
@@ -451,17 +438,17 @@ static bool ModifySet(size_t id) {
 		return false;
 	}
 
-	all->push_back(MenuItem("Name: " + string(product->name), nullptr, 1));
-	all->push_back(MenuItem("Amount: " + FloatToString(product->count), nullptr, 2));
-	all->push_back(MenuItem("Type: " + string(UnitsToString((int)product->units)), nullptr, 3));
-	all->push_back(MenuItem("Date: " + product->date.ToString(), nullptr, 4));
-	all->push_back(MenuItem("Life time: " + to_string(product->expirationDate), nullptr, 5));
-
-	Menu* menu = new Menu("Select a field to change: ", all);
-	int result = menu->DoMenu();
-	delete menu;
+	Menu menu("Select a field to change: ", {
+		MenuItem("Name: " + string(product->name), nullptr, 1),
+		MenuItem("Amount: " + FloatToString(product->count), nullptr, 2),
+		MenuItem("Type: " + string(UnitsToString((int)product->units)), nullptr, 3),
+		MenuItem("Date: " + product->date.ToString(), nullptr, 4),
+		MenuItem("Life time: " + to_string(product->expirationDate), nullptr, 5)
+		});
+	int result = menu.DoMenu();
 
 	if (result == (int)MenuMode::EXIT) return false;
+
 	modifySuccess = ModifyField(product, result);
 	if (modifySuccess) {
 		if (WorkMode() == Mode::TXT)

@@ -22,6 +22,8 @@ enum class MenuMode {
 	PressEsc
 };
 
+bool ShowConsoleCursor(bool active);
+
 void SetColor(int color = 7);
 
 template <typename T>
@@ -36,6 +38,8 @@ void SetColor(int color, T& str, const Ttail&... tail) {
 	SetColor(color, str);
 	SetColor(color, tail...);
 }
+
+static size_t Between(size_t value, size_t left, size_t right);
 
 
 class MenuItem{
@@ -56,21 +60,30 @@ public:
 class Menu : MenuItem{
 private:
 	string title;
+	string endMessage;
+	unsigned short firstItemLine;
+
 	vector<MenuItem> menuItems;
 
-	void ViewItems(int key);
+	void ViewItems();
+
+	void ReDrawItems(size_t select, size_t update = 1);
 
 	void SetMenuItems(vector <MenuItem> items);
 
 	int ShowMenu();
 
-	int ShowMenu(size_t choice, size_t& selectTime, size_t& switchTime);
+	int ShowMenu(const size_t& choice, const size_t& selectTime, const size_t& switchTime);
 
 public:
-	Menu(string title = "#", vector <MenuItem>* items = new vector<MenuItem>);
+	Menu(string title, initializer_list <MenuItem> items = initializer_list<MenuItem>(),
+		string endMessage = "Press ESC to go back or exit");
+
+	Menu(string title, vector <MenuItem> items,
+		string endMessage = "Press ESC to go back or exit");
 
 	int DoMenu(initializer_list<size_t> order = initializer_list<size_t>(),
-		size_t selectTime = 800, size_t switchTime = 550);
+		size_t selectTime = 800, size_t totalSwitchTime = 1000);
 };
 
 
