@@ -2,34 +2,44 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 using std::cout;
 using std::endl;
 using std::cin;
 using std::vector;
+using std::string;
+using std::size_t;
 
 class IntNode
 {
 public:
-	IntNode();
-	~IntNode();
+	IntNode(int value);
+
 	int getValue();
-private:
-	int value;
 	vector<IntNode> childs;
+
+	void addChild(int value);
+	void print(size_t gapCount = 0);
+	vector<int> remove(int value);
+
+private:
+	vector<int> getAllValues();
+	int value;
 };
 
 
 class IntTree
 {
 public:
-	IntTree(float probability = 0.5f);
-	~IntTree();
-	void add(int value);
+	IntTree();
+
+	void add(int value, float probability);
 	void print();
-	void removeAll(int value);
+	void removeAll(int value, float probability);
 
 private:
+	bool isEmpty;
 	IntNode head;
 };
 
