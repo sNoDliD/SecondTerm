@@ -15,11 +15,13 @@ void IntNode::addChild(int value)
 vector<int> IntNode::getAllValues()
 {
 	if (this->childs.empty())
-		return vector<int>({this->getValue()});
+		return vector<int>();
 
 	vector<int> result;
 
 	for (auto& child : this->childs) {
+		result.push_back(child.getValue());
+
 		for (auto& value : child.getAllValues()) {
 			result.push_back(value);
 		}
@@ -57,36 +59,30 @@ vector<int> IntNode::remove(int value)
 			this->childs.erase(this->childs.begin() + i - 1);
 		}
 		else {
-			auto x = child->remove(value);
+			for (auto& removedValue : child->remove(value) ){
+				extra.push_back(removedValue);
+			}
 		}
 	}
-	//for (auto& child : this->childs) {
-	//	if (child.getValue() == value) {
-	//		for (auto& valueGet : child.getAllValues()) {
-	//			if (valueGet != value) {
-	//				extra.push_back(valueGet);
-	//			}
-	//		}
-	//		//
-	//	}
-	//	else {
-	//		auto x = child.remove(value);
-	//	}
-	//}
 
 	return extra;
 }
 
-IntTree::IntTree() : isEmpty(true), head(0) {}
+IntTree::IntTree() : head(nullptr) {}
+
+IntTree::~IntTree()
+{
+	if (this->head)
+		delete this->head;
+}
 
 void IntTree::add(int value, float probability)
 {
-	if (this->isEmpty) {
-		this->head = IntNode(value);
-		this->isEmpty = false;
+	if (!this->head) {
+		this->head = new IntNode(value);
 	}
 	else {
-		IntNode* current = &this->head;
+		IntNode* current = this->head;
 
 		while (true) {
 			size_t childsCount = current->childs.size();
@@ -103,18 +99,115 @@ void IntTree::add(int value, float probability)
 
 void IntTree::print()
 {
-	this->head.print(0);
+	if (this->head)
+		this->head->print(0);
+	else
+		cout << "IntTree is empty\n";
+
 }
 
 void IntTree::removeAll(int value, float probability)
 {
-	if (this->head.getValue() == value) {
-		this->isEmpty = true;
-	}
+	if (!this->head)
+		return;
 
-	for (auto& addValue : this->head.remove(value)) {
+	auto all = this->head->remove(value);
+	
+	if (this->head->getValue() == value) {
+		delete this->head;
+	}
+	for (auto& addValue : all) {
 		if (addValue != value) {
 			this->add(addValue, probability);
 		}
 	}
 }
+
+BinNode::BinNode(int value) : value(value), left(nullptr), right(nullptr)
+{}
+
+BinNode::~BinNode()
+{
+	if (this->left)
+		delete this->left;
+	if (this->right)
+		delete this->right;
+}
+
+void BinNode::add(int value)
+{
+	if (value < this->value) {
+		if (!this->left)
+			this->left = new BinNode{ value };
+		else
+			this->left->add(value);
+	}
+	else {
+		if (!this->right)
+			this->right = new BinNode{ value };
+		else
+			this->right->add(value);
+	}
+}
+
+BinTree::BinTree() : head(nullptr)
+{}
+
+BinTree::~BinTree()
+{
+	if (this->head)
+		delete this->head;
+}
+
+void BinTree::add(int value)
+{
+	if (!this->head)
+		this->head = new BinNode{ value };
+	else
+		this->head->add(value);
+}
+
+void BinNode::preorderPrint()
+{
+	cout << this->value << " ";
+	if(this->left)
+		this->left->preorderPrint();   
+	if(this->right)
+		this->right->preorderPrint(); 
+}
+
+void BinTree::preorderPrint()
+{
+	if (this->head)
+	{
+		this->head->preorderPrint();
+	}
+	else 
+	{
+		cout << "BinTree is empty\n";
+	}
+}
+void BinTree::print()
+{
+	if (this->head) {
+		this->head->print(0);
+		cout << endl;
+	}
+	else
+		cout << "BinTree is empty\n";
+}
+void BinNode::print(size_t gapCount)
+{
+	for (size_t i = 0; i < gapCount; i++) {
+		cout << "--";
+	}
+	cout << "> " << this->value << endl;
+
+	if (this->left)
+		this->left->print(gapCount + 1);
+	if (this->right)
+		this->right->print(gapCount + 1);
+}
+
+
+
