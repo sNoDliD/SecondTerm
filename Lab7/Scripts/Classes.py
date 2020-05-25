@@ -1,6 +1,7 @@
 import json
 
 from DataBase.DataBaseWork import get_query
+
 _temp_users = {}
 
 
@@ -11,25 +12,24 @@ class User:
         user_id = int(user_id)
 
         if user_id not in _temp_users:
-            data = get_query(f'''SELECT group_id, name, status, last_markup, action 
-                                    FROM users WHERE id = ?;''', values=(user_id, ), unpack=True)
             instance = super().__new__(cls)
             instance.id = user_id
-            if not data:
-                instance.group_id = None
-                instance.name = None
-                instance.status = None
-                instance.last_markup = None
-                instance.action = 'registration'
+            if data := get_query(f'''SELECT group_id, name, last_markup, action FROM users WHERE id = ?;''',
+                                 values=(user_id,), unpack=True, limit=1):
 
-                get_query(f'INSERT INTO users(id, action) VALUES (?, ?)', values=(user_id, 'registration'))
-            else:
-                group_id, name, status, last_markup, action = data
+                group_id, name, last_markup, action = data
                 instance.group_id = group_id
                 instance.name = name
-                instance.status = status
                 instance.last_markup = last_markup
                 instance.action = action
+
+            else:
+                instance.group_id = None
+                instance.name = None
+                instance.last_markup = None
+                instance.action = None
+
+                get_query(f'INSERT INTO users(id) VALUES (?)', values=(user_id, ))
 
             _temp_users[user_id] = instance
         else:
@@ -39,10 +39,9 @@ class User:
         return instance
 
     def update(self):
-        data = self.group_id, self.name, self.status, self.last_markup, self.action, self.id
-        get_query(f'''UPDATE users SET group_id = ?, name = ?, status = ?,
-                                       last_markup = ?, action = ?
-                      WHERE id = ?;''', values=data)
+        data = self.group_id, self.name, self.last_markup, self.action, self.id
+        return get_query(f'''UPDATE users SET group_id = ?, name = ?, last_markup = ?, 
+                                 action = ? WHERE id = ?;''', values=data)
 
 
 class Update:
@@ -67,7 +66,7 @@ class Update:
         self.data = data
         self.message_id = kwargs.setdefault('message_id', None)
         self.chat_id = kwargs['chat'].setdefault('id', None)
-        self.text = kwargs.setdefault('text', '')
+        self.text = kwargs.setdefault('text', kwargs.setdefault('caption', ''))
 
         if 'entities' in kwargs:
             for entities in kwargs['entities']:
@@ -110,4 +109,3 @@ class Markup:
             self.buttons.remove([])
 
         return json.dumps({'inline_keyboard': self.buttons})
-

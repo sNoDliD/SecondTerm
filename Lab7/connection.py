@@ -12,7 +12,7 @@ def main():
     while True:
         update = bot.get_updates(last_update_id)
         if update:
-            print(update)
+            # print(update)
             update = Update(**update[0])
             last_update_id = update.id + 1
 

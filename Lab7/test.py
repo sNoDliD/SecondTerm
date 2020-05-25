@@ -64,3 +64,9 @@ from timeit import timeit
 #
 # ''', number=1000)                     todo
 
+t, z = 12, None
+send = z or t
+i = ('%d=%s' % (send, z is None))
+u = i.split('=')[-1]
+j = bool(u)
+print(j)

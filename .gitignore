@@ -1,4 +1,5 @@
-config.py
+Lab7/Scripts/config.py
+
 # Prerequisites
 *.d
 
@@ -402,3 +403,5 @@ MigrationBackup/
 *.vcxproj
 *.filters
 *.ipch
+Lab7/Scripts/my_config.py
+Lab7/Scripts/config.py

@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS users (
                  id INTEGER PRIMARY KEY,
                  group_id INTEGER ,
                  name VARCHAR UNIQUE,
-                 status INTEGER,
                  last_markup INTEGER,
                  action TEXT);
 
@@ -55,5 +54,5 @@ CREATE TRIGGER IF NOT EXISTS update_student
                             --DELETE FROM choice WHERE user_id = NEW.id
                             --    AND (OLD.group_id <> NEW.group_id OR NEW.status = 0);
                             DELETE FROM choice WHERE user_id = NEW.id
-                                AND NEW.status = 0;
+                                AND NEW.action = 'ban';
                         END;

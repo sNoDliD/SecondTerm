@@ -1,2 +1,0 @@
-# TOKEN = '957261169:AAEftycpEFPeJQYMFuriND9hqCmrB_2WxvY'  # aiogram
-TOKEN = '960668493:AAFJrFhG9XEoR0nsOmyT5jGfLQPHPVIW-Y8'  # dimentor

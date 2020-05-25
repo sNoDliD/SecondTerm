@@ -1,7 +1,8 @@
 import sqlite3
 import os
 
-path = r'%s' % os.getcwd().replace('\\', '/')
+path = r'%s' % os.path.dirname(os.path.abspath(__file__)).replace('\\', '/')
+
 databaseFile = path + '/DataBase.db'
 sqlFile = path + '/db.sql'
 
@@ -13,8 +14,8 @@ def open_close_conn(func):
         try:
             result = func(*args, **kwargs, cursor=conn.cursor())
         except sqlite3.Error as error:
-            print("Failed into sqlite: ", error, args, kwargs)
-            result = 'fail'
+            # print("Failed into sqlite: ", error, args, kwargs)
+            result = Exception
         finally:
             if conn:
                 conn.commit()
@@ -56,6 +57,8 @@ def re_create():
     cursor = conn.cursor()
     try:
         cursor.executescript(qry)
+        # cursor.execute('''insert into groups(name, teacher_id) values ('K-19', 738016227), ('K-18', 738016227);''')
+        # conn.commit()
     except Exception as e:
         print('Error: ', e)
         cursor.close()

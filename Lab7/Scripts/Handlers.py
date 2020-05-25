@@ -1,27 +1,30 @@
-from Scripts.Resources import Bot
-from Scripts.Classes import User, Markup, button
-
+from Scripts.Resources import Bot, timer
+from Scripts.Classes import User
+from Scripts.Registartion import registration, add_group_id, first_message, confirm_user
 bot = Bot()
 
 
-def callback_query_handler(update):
-    method = update.data.split('_')[0]
+def action_handler(update):
+    user = User(update.chat_id)
 
-    caller = {'language': change_language,
-              'time': set_experience,
-              'position': change_position,
-              'confirm': confirm,
-              'edit': edit}
+    if user.action == 'registration':
+        registration(update, user)
 
-    if method in caller:
-        caller[method](update)
+    pass
 
 
-def send_language(user):
-    markup = Markup([button('RU', 'language_ru'), button('EN', 'language_en')], 2)
-    send_text = {RU: 'Выберите ваш язык 🗣',
-                 EN: 'Please, choose your language 🗣'}
-    bot.send_message(user.id, send_text[user.language], markup)
+def callback_query_handler(update, user):
+    params = update.data.split('=')
+    what = params[0]
+    if what == 'g_id':
+        if user.action == 'registration':
+            add_group_id(update, user, params)
+
+    if what == 'ans':
+        type_2 = params[1]
+        if type_2 == 'reg':
+            confirm_user(update, user, params[2:])
+    pass
 
 
 def command_handler(update):
@@ -30,41 +33,25 @@ def command_handler(update):
     command = update.text.split()[0][1:]
 
     if command == 'start':
-        if not user.name:
-            send_language(user)
+        first_message(user)
 
-        elif not user.phone:
-            send_phone(user)
-            user.state = Saver(set_phone)
-        elif not user.city:
-            send_city(user)
-            user.state = Saver(set_city)
-        elif not user.experience:
-            send_experience(user, False)
-        else:
-            update.data = 'F'
-            update.message_id = None
-            confirm(update)
-
-    elif command == 'language':
-        send_language(user)
+    pass
 
 
+@timer
 def update_handler(update):
-    if update.edited:
+    user = User(update.chat_id)
+    if update.edited or user.action == 'ban':
         return
 
-    user = User(update.chat_id)
-
     if update.data:
-        callback_query_handler(update)
+        callback_query_handler(update, user)
 
     elif user.action:
-        pass
+        action_handler(update)
 
     elif update.text.startswith('/'):
         command_handler(update)
 
-    elif update.text:
-        if not user.name:
-            send_language(user)
+    else:
+        bot.delete_message(user.id, update.message_id)
