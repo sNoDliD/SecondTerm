@@ -405,3 +405,5 @@ MigrationBackup/
 *.ipch
 Lab7/Scripts/my_config.py
 Lab7/Scripts/config.py
+Lab7/.env
+Lab7/.env

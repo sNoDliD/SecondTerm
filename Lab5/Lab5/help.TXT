@@ -1,0 +1,6 @@
+change - change the type of graph
+orientation T/F - set 
+weight T/F -
+rand N M - create random graph with N vertices and M edges
+print - show graph
+add X Y (M) - create edge between vertices X and Y, optional: weight M

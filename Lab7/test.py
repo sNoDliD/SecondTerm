@@ -70,3 +70,7 @@ i = ('%d=%s' % (send, z is None))
 u = i.split('=')[-1]
 j = bool(u)
 print(j)
+import os
+
+x = os.environ
+print(type(x))
