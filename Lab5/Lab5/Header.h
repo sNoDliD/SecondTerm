@@ -13,7 +13,8 @@ using std::string; using std::stringstream;
 using std::size_t;
 using vertices = vector<size_t>;
 
-void EnterPoint();
+void EnterPoint(std::istream& in = cin);
+
 
 class IGraph {
 public:
