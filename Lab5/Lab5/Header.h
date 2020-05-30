@@ -2,22 +2,31 @@
 #define MY_HEADER_ALL_DATA
 
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <thread>
+#include <chrono>
+#include <map>
 
 using std::cout; using std::cin; using std::endl;
 
-using std::vector;
+
+using std::vector; using std::size_t;
 using std::string; using std::stringstream;
-using std::size_t;
+using std::this_thread::sleep_for; using std::chrono::milliseconds;
+
 using vertices = vector<size_t>;
 
-void EnterPoint(std::istream& in = cin);
+void EnterPoint(std::istream& in = cin, size_t sleep_time = 0);
 
 
 class IGraph {
 public:
+	virtual void randomize() = 0;
+	virtual void print() = 0;
+
 	virtual bool is_acyclic() = 0;
 	virtual void DFS() = 0;
 	virtual void DFS_weigth() = 0;
@@ -31,15 +40,116 @@ public:
 	virtual IGraph* Skeletal() = 0;
 	virtual IGraph* Skeletal_weigth() = 0;
 	virtual IGraph* Kruskal() = 0;
+
+	virtual IGraph* Change() = 0;
 	virtual ~IGraph() {};
 };
 
 class GraphMatrix : public IGraph {
-	GraphMatrix();
+public:
+	GraphMatrix() {
+
+	}
+	void randomize() override {
+
+	}
+	void print() override {
+
+	}
+	bool is_acyclic() override {
+		return true;
+	}
+	void DFS() override {
+
+	}
+	void DFS_weigth() override {
+
+	}
+
+	vertices Sort_kana() override {
+		return vertices{};
+	}
+	vector<vertices> Dijkstree()override {
+		return vector<vertices>{};
+	}
+	vertices Dijkstree(size_t vertex) override {
+		return vertices{};
+	}
+	vertices Dijkstree(size_t vertex_start, size_t vertex_end) override {
+		return vertices{};
+	}
+
+	size_t Total_weight() override {
+		return size_t{};
+	}
+	IGraph* Skeletal() override {
+		return this;
+	}
+	IGraph* Skeletal_weigth() override {
+		return this;
+	}
+	IGraph* Kruskal() override {
+		return this;
+	}
+
+	IGraph* Change() override {
+		return this;
+	}
+
+	~GraphMatrix() override {}
 };
 
 class GraphList : public IGraph {
-	GraphList();
+public:
+	GraphList() {}
+
+	void randomize() override {
+
+	}
+	void print() override {
+
+	}
+	bool is_acyclic() override {
+		return true;
+	}
+	void DFS() override {
+
+	}
+	void DFS_weigth() override {
+
+	}
+
+	vertices Sort_kana() override {
+		return vertices{};
+	}
+	vector<vertices> Dijkstree()override {
+		return vector<vertices>{};
+	}
+	vertices Dijkstree(size_t vertex) override {
+		return vertices{};
+	}
+	vertices Dijkstree(size_t vertex_start, size_t vertex_end) override {
+		return vertices{};
+	}
+
+	size_t Total_weight() override {
+		return size_t{};
+	}
+	IGraph* Skeletal() override {
+		return this;
+	}
+	IGraph* Skeletal_weigth() override {
+		return this;
+	}
+	IGraph* Kruskal() override {
+		return this;
+	}
+
+	IGraph* Change() override {
+		return this;
+	}
+
+	~GraphList() override {}
 };
 
 
