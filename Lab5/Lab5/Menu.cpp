@@ -1,5 +1,6 @@
 #include "Header.h"
 
+
 namespace {
 	struct Clener
 	{
@@ -30,72 +31,85 @@ namespace {
 
 	struct Inputer
 	{
-		stringstream& in;
-		bool continue_input = true;
+		string line;
+		int count;
 
-		Inputer(stringstream& in) : in(in) {}
+		Inputer(string line) : line(line), count(0) {}
+
+		template <typename T, class lambda>
+		Inputer operator () (T& value, lambda check) {
+			if (this->count != -1) {
+				string oneWord;
+				stringstream allWords{ this->line };
+				if (allWords >> oneWord) {
+					stringstream onwWordStream{ oneWord };
+
+					if (onwWordStream >> value && check != nullptr && check(value))
+						this->count = onwWordStream.eof() ? this->count + 1 : -1;
+					else
+						this->count = -1;
+
+					if (allWords.eof())
+						this->line = "";
+					else
+						std::getline(allWords, this->line);
+				}
+				else {
+					this->count = -1;
+				}
+			}
+
+			return *this;
+		}
 
 		template <typename T>
-		Inputer operator () (T*& ptr)
-		{
-			if (this->continue_input) {
-				creator(ptr);
-				if (!(this->in >> *ptr)) {
-					clener(ptr);
-					this->continue_input = false;
-				}
+		Inputer operator () (T& value) {
+			if (this->count != -1) {
+				string oneWord;
+				stringstream allWords{ this->line };
+				if (allWords >> oneWord) {
+					stringstream onwWordStream{ oneWord };
 
-			}
-			else {
-				clener(ptr);
+					if (onwWordStream >> value)
+						this->count = onwWordStream.eof() ? this->count + 1 : -1;
+					else
+						this->count = -1;
+
+					if (allWords.eof())
+						this->line = "";
+					else
+						std::getline(allWords, this->line);
+				}
+				else {
+					this->count = -1;
+				}
 			}
 
 			return *this;
 		}
 	};
 
+	void demonstration(string params) {
+		int time;
 
-	void demonstration(size_t time) {
-		std::ifstream demo_file("help.txt");
-
-		if (demo_file) {
-			EnterPoint(demo_file, time);
-			demo_file.close();
-			cout << "The end of demo mode\n";
+		Inputer inputer{ params };
+		int values_count = inputer(time, [](int time) {return time > 0 && time < 5e3; }).count;
+		if (values_count == 1) {
+			std::ifstream demo_file("demo.txt");
+			if (demo_file) {
+				EnterPoint(demo_file, time);
+				demo_file.close();
+				cout << "The end of demo mode\n";
+			}
+			else {
+				cout << "Can't open demo file(\n";
+			}
 		}
-		else {
-			cout << "Can't open demo file(\n";
-		}
+		else
+			cout << "Incorrect input! Look 'help'\n";
 	}
 
-	bool change (bool condition, IGraph*& graph) {
-		if (!condition) return false;
-
-		IGraph* new_graph = graph->Change();
-		clener(graph);
-		graph = new_graph;
-
-		return true;
-	}
-	
-	bool print (bool condition, IGraph*& graph) {
-		if (!condition) return false;
-
-		graph->print();
-
-		return true;
-	}
-	
-	bool randomize (bool condition, IGraph*& graph) {
-		if (!condition) return false;
-
-		graph->randomize();
-
-		return true;
-	}
-
-	bool help(bool condition) {
-		if (!condition) return false;
+	bool help() {
 
 		std::ifstream help_file("help.txt");
 
@@ -115,34 +129,68 @@ namespace {
 		return true;
 	}
 
-	bool test(IGraph*& graph, int* first, int* second, float* weight) { return true; }
+	bool change(IGraph*& graph, string line) {
 
-	string InputValues(std::istream& in, int*& first, int*& second, float*& weight) {
+		IGraph* new_graph = graph->Change();
+		clener(graph);
+		graph = new_graph;
+
+		return true;
+	}
+
+	bool print(IGraph*& graph, string line) {
+
+		graph->print();
+
+		return true;
+	}
+
+	bool randomize(IGraph*& graph, string line) {
+
+		graph->randomize();
+
+		return true;
+	}
+
+	bool add(IGraph*& graph, string line) { return true; }
+
+	bool skeletal(IGraph*& graph, string line) { return true; }
+
+	bool minway(IGraph*& graph, string line) { return true; }
+
+	bool topsort(IGraph*& graph, string line) { return true; }
+
+	bool benchmark(IGraph*& graph, string line) { return true; }
+
+	bool error(IGraph*& graph, string line) { return true; }
+
+	string InputValues(std::istream& in, string& command) {
+		cout << ">> ";
 		string line;
 		std::getline(in, line);
-		if (&in != &cin) cout << line + '\n';
+		if (&in != &cin) cout << line << '\n';
 
 		stringstream temp{ line };
-
-
-		if (temp >> line) {
-			Inputer inputer{ temp };
-			inputer(first)(second)(weight);
-
-			if (!temp.eof() || (first && *first <= 0) || (second && *second <= 0)) {
-				line = "error";
-			}
-		}
+		temp >> command;
+		std::getline(temp, line);
 
 		return line;
 	}
 
-	void Analizer(IGraph*& graph, string command, int* first, int* second, float* weight) {
+	void Analizer(IGraph*& graph, string command, string params) {
 		bool success = true;
-		static std::map<string, bool(&)(IGraph*&, int*, int*, float*)> s;
-		auto x = &test;
-		
-		if (command == "help") success = help(!first);
+		static std::map<string, bool(*)(IGraph*&, string)> menu{
+			{"change", change} ,
+			{"print", print} ,
+			{"rand", randomize} ,
+			{"add", add} ,
+			{"skeletal", skeletal} ,
+			{"minway", minway} ,
+			{"topsort", topsort} ,
+			{"benchmark", benchmark} ,
+			{"error", error}
+		};
+		/*if (command == ) success = help(!first);
 
 		else if (command == "change") success = change(!first, graph);
 
@@ -158,46 +206,39 @@ namespace {
 
 		else if (command == "topsort") success = help(!first);
 
-		else if (command == "benchmark") success = help(!first);
+		else if (command == "benchmark") success = help(!first);*/
 
-		else if (command == "error") cout << "Error reading parameters\n";
 
-		else cout << "Could not recognize the command\n";
-
-		if (!success) {
-			cout << "Filed to complete operation\n";
+		if (menu.count(command)) {
+			if (!menu[command](graph, params))
+				cout << "Filed to complete operation\n";
 		}
+		else if (command == "demo") {
+			demonstration(params);
+		}
+		else if (command == "help") {
+			help();
+		}
+		else cout << "Could not recognize the command\n";
 	}
 }
 
 
 void EnterPoint(std::istream& in, size_t sleep_time) {
-	if(&in == &cin) help(true);
+	if(&in == &cin) help();
 	IGraph* graph = new GraphMatrix;
-	
-	int* first{};
-	int* second{};
-	float* weight{};
 
 	while (true)
 	{
-		string command = InputValues(in, first, second, weight);
+		string command;
+		string params = InputValues(in, command);
+
 		if (command == "exit")
 			break;
-		else if (command == "demo") {
-			if (first && !second) {
-				demonstration(*first);
-				continue;
-			}
-			else
-				command = "error";
-		}
+		
+		Analizer(graph, command, params);
 
-		Analizer(graph, command, first, second, weight);
 		cout << endl;
 		sleep_for(milliseconds(sleep_time));
 	}
-
-	clener(graph)(first)(second)(weight);
-
 }

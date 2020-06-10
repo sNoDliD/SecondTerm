@@ -7,6 +7,7 @@ _temp_users = {}
 
 class User:
     global _temp_users
+    # __slots__ = ('id', '')
 
     def __new__(cls, user_id):
         user_id = int(user_id)

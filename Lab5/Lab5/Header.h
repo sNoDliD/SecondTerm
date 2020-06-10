@@ -9,6 +9,7 @@
 #include <thread>
 #include <chrono>
 #include <map>
+#include <functional>
 
 using std::cout; using std::cin; using std::endl;
 
