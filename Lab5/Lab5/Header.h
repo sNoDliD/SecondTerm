@@ -25,7 +25,8 @@ void EnterPoint(std::istream& in = cin, size_t sleep_time = 0);
 
 class IGraph {
 public:
-	virtual void randomize() = 0;
+	virtual void randomize(size_t n, size_t m, bool oriented) = 0;
+	virtual void add(size_t n, size_t m, float weight) = 0;
 	virtual void print() = 0;
 
 	virtual bool is_acyclic() = 0;
@@ -51,7 +52,10 @@ public:
 	GraphMatrix() {
 
 	}
-	void randomize() override {
+	void randomize(size_t n, size_t m, bool oriented) override {
+
+	}
+	void add(size_t n, size_t m, float weight) override{
 
 	}
 	void print() override {
@@ -94,7 +98,8 @@ public:
 	}
 
 	IGraph* Change() override {
-		return this;
+		IGraph* graphList{};
+		return graphList;
 	}
 
 	~GraphMatrix() override {}
@@ -104,7 +109,10 @@ class GraphList : public IGraph {
 public:
 	GraphList() {}
 
-	void randomize() override {
+	void randomize(size_t n, size_t m, bool oriented) override {
+
+	}
+	void add(size_t n, size_t m, float weight) override {
 
 	}
 	void print() override {

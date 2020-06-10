@@ -1,14 +1,14 @@
 
 			LIST OF COMMANDS
-change		- change the type of graph
-rand N M (0|1)	- create random graph with N vertices and M edges
-print		- show graph info
-add X Y (M)	- create edge between vertices X and Y, optional: weight M
-skeletal (1|2)	- 
-minway (N) (M)	-
-topsort		- 
-help		-
-benchmark	-
-demo T		- wait T milisec beetween operations
-exit		- close program
+change		- change the type of graph.
+rand N M (T)	- create random graph with N vertices and M edges, T - if graph if graph is oriented. Default not oriented.
+print		- show graph info.
+add X Y (W)	- create edge between vertices X and Y, optional: weight W of edge.
+skeletal (1|2)	- show skeletal graph. 1 - use DFS, 2 - use DFS by weight. Default use Kruskal's algorithm.
+minway (V1) (V2)- find all min ways in a graph. If V1 - min ways from vertex V1. If also V2 - min way from V1 to V2. 
+topsort		- show vertices in topological order.
+benchmark	- start benchmark.
+demo T		- start demonstration. Wait T milisec beetween operations.
+help		- show list of commands.
+exit		- close program.
 
