@@ -127,15 +127,15 @@ namespace {
 
 	bool randomize(IGraph*& graph, string line) {
 		int n, m;
-		string orianted;
 
 		auto positive = [](int value) { return value > 0; };
 		Inputer inputer{ line };
 		inputer = inputer(n, positive)(m, positive);
 
 		if (inputer.count == 2) {
-			inputer(orianted);
-			graph->randomize(n, m, orianted == "T");
+			string w;
+			inputer (w);
+			graph->randomize(n, m, w == "W");
 			return true;
 		}
 		return false;

@@ -1,7 +1,7 @@
 
 			LIST OF COMMANDS
 change		- change the type of graph.
-rand N M (T)	- create random graph with N vertices and M edges, T - if graph if graph is oriented. Default not oriented.
+rand N M (W)	- create random graph with N vertices and M edges. W - if graph has weights. Default no weights.
 print		- show graph info.
 add X Y (W)	- create edge between vertices X and Y, optional: weight W of edge.
 skeletal (1|2)	- show skeletal graph. 1 - use DFS, 2 - use DFS by weight. Default use Kruskal's algorithm.
